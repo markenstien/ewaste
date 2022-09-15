@@ -26,7 +26,7 @@
             }else {
                 $data = $this->itemModel->all();
             }
-            $data = $this->itemModel->appendPartner($data);
+            // $data = $this->itemModel->appendPartner($data);
             parent::json($data);
         }
 

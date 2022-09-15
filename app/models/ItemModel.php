@@ -112,14 +112,26 @@
             );
 
             $items = $this->db->resultSet();
+            $retVal = [];
 
             foreach($items as $key => $item) {
-                $item->sell_price = (double) $item->sell_price;
-                $item->id = (int) $item->id;
-                $item->user_id = (double) $item->user_id;
-                $item->total_stock = (double) $item->total_stock;
+                array_push($retVal, [
+                    'id' => $item->id,
+                    'title' => $item->name,
+                    'description' => $item->remarks,
+                    'price' => $item->sell_price,
+                    'images' => [
+                        'https://cdn.mos.cms.futurecdn.net/2XcW8BYBLE4Uy5he8poY3L-320-80.jpg',
+                        'https://static.acer.com/up/Resource/Acer/Laptops/Nitro_5/Image/20211227/Nitro5-an515-58-rgbkb-black-modelmain.png'
+                    ],
+                    'badge' => 'Laptops',
+                    'rating' => 3.0,
+                    'totalReview' => 125,
+                    'isAddedToWishList' => false
+                ]);
             }
-            return $items;
+
+            return $retVal;
         }
 
         public function appendPartner($items = []) {
