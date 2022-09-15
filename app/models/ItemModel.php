@@ -116,17 +116,17 @@
 
             foreach($items as $key => $item) {
                 array_push($retVal, [
-                    'id' => $item->id,
+                    'id' => (int) $item->id,
                     'title' => $item->name,
                     'description' => $item->remarks,
-                    'price' => $item->sell_price,
+                    'price' => (double) $item->sell_price,
                     'images' => [
                         'https://cdn.mos.cms.futurecdn.net/2XcW8BYBLE4Uy5he8poY3L-320-80.jpg',
                         'https://static.acer.com/up/Resource/Acer/Laptops/Nitro_5/Image/20211227/Nitro5-an515-58-rgbkb-black-modelmain.png'
                     ],
                     'badge' => 'Laptops',
-                    'rating' => 3.0,
-                    'totalReview' => 125,
+                    'rating' => (double) 3.0,
+                    'totalReview' => (int) 125,
                     'isAddedToWishList' => false
                 ]);
             }
