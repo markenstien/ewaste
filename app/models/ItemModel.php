@@ -108,11 +108,18 @@
                 "SELECT item.*,ifnull(stock.total_stock,0) as total_stock FROM {$this->table} as item
                     LEFT JOIN ({$sqlSnippet}) as stock
                     ON stock.item_id = item.id
-                    
                     {$where} {$order_by} {$limit}"
             );
 
-            return $this->db->resultSet();
+            $items = $this->db->resultSet();
+
+            foreach($items as $key => $item) {
+                $item->sell_price = (double) $item->sell_price;
+                $item->id = (int) $item->id;
+                $item->user_id = (double) $item->user_id;
+                $item->total_stock = (double) $item->total_stock;
+            }
+            return $items;
         }
 
         public function appendPartner($items = []) {
