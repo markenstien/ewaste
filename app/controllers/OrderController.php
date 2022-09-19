@@ -14,7 +14,6 @@
         public function show($id) {
             csrfReload();
             $order = $this->model->getComplete($id);
-
             $this->data['order'] = $order['order'];
             $this->data['payment'] = $order['payment'];
             $this->data['items'] = $order['items'];

@@ -3,6 +3,7 @@
         <div class="card-header">
             <h4 class="card-title">Items</h4>
             <?php echo btnCreate(_route('item:create'))?>
+            <?php Flash::show()?>
         </div>
         <div class="card-body">
             <div class="table-responsive">

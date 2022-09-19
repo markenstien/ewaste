@@ -23,11 +23,12 @@
 			// $this->addName();
 
 			$this->addLabel();
-			$this->addSearchKey();
-			$this->addDescription();
+			// $this->addSearchKey();
+			// $this->addDescription();
 			$this->addGlobalId();
 			$this->addGlobalKey();
 			$this->addFileUpload();
+			$this->addRedirectTo();
 			
 			$this->addSubmit();
 		}

@@ -26,6 +26,10 @@
             }else {
                 $data = $this->itemModel->all();
             }
+
+            if($data) {
+                $data = $this->itemModel->appendImages($data,'URL_ONLY');
+            }
             // $data = $this->itemModel->appendPartner($data);
             parent::json($data);
         }

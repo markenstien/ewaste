@@ -46,6 +46,9 @@
                 'limit' => 5,
                 'order_by' => 'id desc'
             ]);
+
+            $this->data['attachmentForm']->setValue('redirect_to', _route('item:show', $id));
+
             return $this->view('item/show', $this->data);
         }
 

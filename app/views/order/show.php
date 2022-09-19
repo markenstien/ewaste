@@ -3,7 +3,7 @@
     <?php Flash::show()?>
     <div>
         <div class="text-center">
-            <?php if(isEqual($order->order_status, 'cancelled')) :?>
+            <?php if(isEqual($order->status, 'cancelled')) :?>
                 <div class="alert alert-danger">
                     <p class="alert-text">Order is Void</p>
                 </div>
@@ -19,11 +19,11 @@
             </tr>
             <tr>
                 <td>Mobile Number : </td>
-                <td><?php echo $order->mobile_number?></td>
+                <td><?php echo $order->customer_phone?></td>
             </tr>
             <tr>
                 <td>Address : </td>
-                <td><?php echo $order->address?></td>
+                <td><?php echo $order->customer_address?></td>
             </tr>
         </table>
         <h3>Particulars</h3>
@@ -41,22 +41,12 @@
                         <td><?php echo $row->quantity?></td>
                         <td><?php echo $row->name?></td>
                         <td><?php echo amountHTML($row->price)?></td>
-                        <td>
-                            <?php echo amountHTML($row->sold_price)?>
-                            <?php if($row->discount_price) :?>
-                                <div><small>(<?php echo amountHTML($row->discount_price)?>)</small></div>
-                            <?php endif?>
-                        </td>
+                        <td><?php echo amountHTML($row->price * $row->quantity)?></td>
                     </tr>
                 <?php endforeach?>
             </tbody>
         </table>
 
-        <section>
-            <p class="infosec">
-                You have received a total of <strong><?php echo $order->discount_amount?></strong> Discount on this order
-            </p>
-        </section>
 
         <section>
             <h1>Total : <?php echo amountHTML($order->net_amount)?></h1>
@@ -77,7 +67,7 @@
             <?php endif?>
         </section>
 
-        <?php if(!isEqual($order->order_status, 'cancelled')) :?>
+        <?php if(!isEqual($order->status, 'cancelled')) :?>
             <section class="mt-5">
                 <a href="<?php echo _route('order:void', $order->id, [
                     'csrfToken' => csrfGet()

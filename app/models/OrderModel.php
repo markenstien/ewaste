@@ -100,7 +100,18 @@
         }
 
         public function getComplete($id) {
-            $order = parent::get($id);
+            $orders = $this->getAll([
+                'where' => [
+                    'orders.id' => $id
+                ]
+            ]);
+
+            if($orders) {
+                $order = $orders[0];
+            }else{
+                $this->addError('order not found!');
+                return false;
+            }
             if(!$order) {
                 $this->addError("order not found!");
                 return false;

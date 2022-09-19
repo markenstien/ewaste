@@ -44,8 +44,10 @@
         }
 
         public function getImages($id) {
-            $attachModel = model('AttachmentModel');
-            return $attachModel->all([
+            if(!isset($this->_attachmentModel)) {
+                $this->_attachmentModel = model('AttachmentModel');
+            }
+            return $this->_attachmentModel->all([
                 'global_id' => $id,
                 'global_key' => CategoryService::ITEM
             ]);
@@ -112,26 +114,8 @@
             );
 
             $items = $this->db->resultSet();
-            $retVal = [];
 
-            foreach($items as $key => $item) {
-                array_push($retVal, [
-                    'id' => (int) $item->id,
-                    'title' => $item->name,
-                    'description' => $item->remarks,
-                    'price' => (double) $item->sell_price,
-                    'images' => [
-                        'https://cdn.mos.cms.futurecdn.net/2XcW8BYBLE4Uy5he8poY3L-320-80.jpg',
-                        'https://static.acer.com/up/Resource/Acer/Laptops/Nitro_5/Image/20211227/Nitro5-an515-58-rgbkb-black-modelmain.png'
-                    ],
-                    'badge' => 'Laptops',
-                    'rating' => (double) 3.0,
-                    'totalReview' => (int) 125,
-                    'isAddedToWishList' => false
-                ]);
-            }
-
-            return $retVal;
+            return $items;
         }
 
         public function appendPartner($items = []) {
@@ -178,5 +162,20 @@
             }
             
             return true;
+        }
+
+        public function appendImages($products = [], $type = null) {
+            foreach($products as $key => $row) {
+                $images = $this->getImages($row->id);
+                $row->images = $images;
+                if($type == 'URL_ONLY') {
+                    if($images) {
+                        $row->images = arr_layout_keypair($images,'full_url');
+                    }
+                }else{
+                    $row->images = $images;
+                }
+            }
+            return $products;
         }
     }

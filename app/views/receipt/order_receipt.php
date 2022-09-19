@@ -13,11 +13,11 @@
                 </tr>
                 <tr>
                     <td>Mobile Number : </td>
-                    <td><?php echo $order->mobile_number?></td>
+                    <td><?php echo $order->customer_phone?></td>
                 </tr>
                 <tr>
                     <td>Address : </td>
-                    <td><?php echo $order->address?></td>
+                    <td><?php echo $order->customer_address?></td>
                 </tr>
             </table>
             <h3>Particulars</h3>
@@ -36,21 +36,12 @@
                             <td><?php echo $row->name?></td>
                             <td><?php echo amountHTML($row->price)?></td>
                             <td>
-                                <?php echo amountHTML($row->sold_price)?>
-                                <?php if($row->discount_price) :?>
-                                    <div><small>(<?php echo amountHTML($row->discount_price)?>)</small></div>
-                                <?php endif?>
+                                <?php echo amountHTML($row->quantity * $row->price)?>
                             </td>
                         </tr>
                     <?php endforeach?>
                 </tbody>
             </table>
-
-            <section>
-                <p class="infosec">
-                    You have received a total of <strong><?php echo $order->discount_amount?></strong> Discount on this order
-                </p>
-            </section>
 
             <section>
                 <h1>Total : <?php echo amountHTML($order->net_amount)?></h1>

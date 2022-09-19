@@ -24,7 +24,7 @@ use Mpdf\Tag\I;
 					Flash::set($this->model->getErrorString());
 
 				if(!empty($post['redirect_to'])) {
-					return redirect(_route($post['redirect_to']));
+					return redirect($post['redirect_to']);
 				}
 				
 				return request()->return();

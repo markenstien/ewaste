@@ -20,11 +20,18 @@
         if(! is_array($key)) 
         {
             foreach($array as $row => $val) {
-
-                if(is_object($val)){
-                    $keyPair[$val->$key] = $val->$value;
-                }else{
-                    $keyPair[$val[$key]] = $val[$value];
+                if(is_null($value)) {
+                    if(is_object($val)){
+                        $keyPair[] = $val->$key;
+                    }else{
+                        $keyPair[] = $val[$key];
+                    }
+                } else {
+                    if(is_object($val)){
+                        $keyPair[$val->$key] = $val->$value;
+                    }else{
+                        $keyPair[$val[$key]] = $val[$value];
+                    }
                 }
             }
         }else{
