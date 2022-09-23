@@ -9,7 +9,7 @@
         }
 
         final protected function json($data, $success = true, $message = "no message") {
-            // header('Content-Type: application/json; charset=utf-8');
+            header('Content-Type: application/json; charset=utf-8');
             echo json_encode([
                 'data' => $data,
                 'success' => true,
@@ -17,6 +17,16 @@
             ]);
             return;
         }
+        
+        final protected function toJson($data) {
+            return json_encode($data);
+        }
+
+        final protected function decodeJson($data) {
+            return json_decode($data);
+        }
+
+    
         
         final protected function isPost() {
             if(isSubmitted()) 
@@ -29,6 +39,7 @@
         }
 
         final protected function validateAppUser($secret = null) {
+            return true;
             if(is_null($secret)) {
                 if (!isset($this->inputs['appKey'])) {
                     $this->json([
@@ -47,13 +58,13 @@
         }
 
         final protected function validateAppUserKey($secret) {
-            if(!isEqual($secret, APP_KEY)) {
-                $this->json([
-                    'error' => TRUE,
-                    'message' => 'INVALID APP USER'
-                ]);
-                die();
-            }
+            // if(!isEqual($secret, APP_KEY)) {
+            //     $this->json([
+            //         'error' => TRUE,
+            //         'message' => 'INVALID APP USER'
+            //     ]);
+            //     die();
+            // }
         }
 
     }

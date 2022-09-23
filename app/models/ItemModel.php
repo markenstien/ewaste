@@ -114,7 +114,6 @@
             );
 
             $items = $this->db->resultSet();
-
             return $items;
         }
 
