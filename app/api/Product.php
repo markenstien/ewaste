@@ -32,6 +32,7 @@
                 $data = $this->itemModel->appendImages($data,'URL_ONLY');
             }
             $data = $this->productEntity->convertItems($data);
+            
             parent::json($data);
         }
 

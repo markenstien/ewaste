@@ -1,17 +1,27 @@
-<?php 
+<?php
 
-    class Cart extends Controller
+    use Classes\Entity\Cart as EntityCart;
+    load(['Cart'],CLASSES.DS.'Entity');
+
+    class Cart extends APIController
     {
         public function __construct()
         {
             parent::__construct();
             $this->cart = model('CartModel');
             $this->cartItem = model('CartItemModel');
+            $this->productModel = model('ItemModel');
+            $this->cartEntity = new EntityCart;
         }
 
         public function index() {
-            $carts = $this->cart->getCart(1);
-            dd($carts);
+            $userId = $this->request->get('userId');
+            $carts = $this->cart->getCart($userId);
+
+            $carItems = $carts->items;
+            $carItems = $this->productModel->appendImages($carItems,"URL_ONLY");
+            $carts = $this->cartEntity->convertItems($carItems);
+            parent::json($carts);
         }
 
         public function addItem() {

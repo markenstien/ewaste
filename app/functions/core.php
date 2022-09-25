@@ -5,7 +5,7 @@
                 $retVal = intval($data);
             break;
             case 'double':
-                $retVal = (float) $data;
+                $retVal = floatval(sprintf("%.2f", $data));
             break;
 
             default:
