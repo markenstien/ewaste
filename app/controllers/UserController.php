@@ -24,7 +24,7 @@
 					'where' => $params
 				]);
 			}else{
-				$this->data['users'] = $this->model->getAll( );
+				$this->data['users'] = $this->model->getAll();
 			}
 			
 

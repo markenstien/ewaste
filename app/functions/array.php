@@ -13,11 +13,11 @@
         $keyPair = [];
 
 
-        if( !is_array($array) ){
+        if(!is_array($array)){
             return [];
         }
         
-        if(! is_array($key)) 
+        if(!is_array($key)) 
         {
             foreach($array as $row => $val) {
                 if(is_null($value)) {
