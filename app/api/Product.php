@@ -1,13 +1,14 @@
 <?php
+    load(['Product'], CLASSES.DS.'Entity');
 
     class Product extends APIController
     {
-
         public function __construct()
         {
             parent::__construct();
             parent::validateAppUser();
             $this->itemModel = model('ItemModel');
+            $this->productEntity = new Classes\Entity\Product;
         }
 
         public function index() {
@@ -30,7 +31,7 @@
             if($data) {
                 $data = $this->itemModel->appendImages($data,'URL_ONLY');
             }
-            // $data = $this->itemModel->appendPartner($data);
+            $data = $this->productEntity->convertItems($data);
             parent::json($data);
         }
 

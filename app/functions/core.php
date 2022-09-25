@@ -1,4 +1,18 @@
 <?php
+    function _convert($data, $type = null) {
+        switch($type) {
+            case 'int':
+                $retVal = intval($data);
+            break;
+            case 'double':
+                $retVal = (float) $data;
+            break;
+
+            default:
+                $retVal = $data;
+        }
+        return $retVal;
+    }
     function _download_wrap($file_name , $path)
     {
         $path = seal(urlencode($path));
