@@ -12,7 +12,7 @@
             $inputs = $this->request->inputs();
             if($type == 'json-encoded') {
                 if(isset($inputs['postData'])) {
-                    return json_decode($inputs['postData']);                    
+                    return json_decode($inputs['postData'], true);                    
                 }
             }
             return $inputs;
