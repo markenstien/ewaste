@@ -6,6 +6,7 @@
     class Cart extends AbstractEntity
     {
         public $id;//int
+        public $productId;
         public $title; //productname
         public $description;
         public $price;//double
@@ -18,7 +19,8 @@
 
         public function initConvert($convertData) {
             $this->userId = $convertData->user_id;
-            $this->id = $convertData->id;
+            $this->id = $convertData->cart_item_id;
+            $this->productId = $convertData->id;
             $this->title = $convertData->name;
             $this->description = $convertData->remarks;
             $this->price = $convertData->sell_price;
