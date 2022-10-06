@@ -26,13 +26,18 @@
 
         public function addItem() {
             $request = $this->inputs;
-            if (!isSubmitted()) {
+            if (parent::isPost()) {
                 $data = [
                     'user_id' => $request['userId'],
                     'item_id' => $request['itemId'],
                     'quantity' => $request['quantity']
                 ];
-                $this->cart->add($data);
+                $cartId = $this->cart->add($data);
+
+                parent::json([
+                    'responseId' => $cartId,
+                    'cartData' => $data
+                ]);
             }
         }
     }
