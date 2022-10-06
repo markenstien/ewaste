@@ -40,4 +40,15 @@
                 ]);
             }
         }
+
+        public function delete() {
+
+            if(parent::isPost()) {
+                $isDeleted = $this->cartItem->delete($this->inputs['id']);
+                parent::json([
+                    'isDeleted' => $isDeleted,
+                    'cartId' => $this->inputs['id']
+                ]);
+            }
+        }
     }
