@@ -5,7 +5,17 @@
         protected function __construct()
         {
             $this->request = request();
-            $this->inputs  = $this->request->inputs();
+            $this->inputs  = $this->getInputs();
+        }
+
+        final protected function getInputs($type = 'json-encoded') {
+            $inputs = $this->request->inputs();
+            if($type == 'json-encoded') {
+                if(isset($inputs['postData'])) {
+                    return json_decode($inputs['postData']);                    
+                }
+            }
+            return $inputs;
         }
 
         final protected function json($data, $success = true, $message = "no message") {

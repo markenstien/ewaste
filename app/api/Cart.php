@@ -25,12 +25,12 @@
         }
 
         public function addItem() {
-            $request = request()->inputs();
+            $request = $this->inputs;
             if (!isSubmitted()) {
                 $data = [
-                    'user_id' => 1,
-                    'item_id' => 2,
-                    'quantity' => 1
+                    'user_id' => $request['userId'],
+                    'item_id' => $request['itemId'],
+                    'quantity' => $request['quantity']
                 ];
                 $this->cart->add($data);
             }
