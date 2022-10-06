@@ -51,4 +51,17 @@
                 ]);
             }
         }
+
+        public function addOrDeduct() {
+            if (parent::isPost()) {
+                $passedData = [
+                    'id' => $this->inputs['id'],
+                    // 'quantity' => $this->inputs['quantity'],
+                    'type' => $this->inputs['type']
+                ];
+
+                $this->cartItem->addOrDeduct($passedData);
+                parent::json($passedData);
+            }
+        }
     }

@@ -4,6 +4,24 @@
     {
         public $table = 'cart_items';
 
+        public function addOrDeduct($data) {
+            $cartItem = parent::get($data['id']);
+            $quantity = $cartItem->quantity;
+            if($data['type'] == 'deduct') {
+                if($quantity > 2) {
+                    $quantity -= 1;
+                }else{
+                    //error
+                }
+            }else{
+                $quantity++;
+            }
+
+            return parent::update([
+                'quantity' => $quantity
+            ], $data['id']);
+        }
+
         public function addItem($cartId, $itemId, $quantity) {
             //check if product already exists then update qty
             $item = $this->getByItem($cartId, $itemId);
