@@ -39,7 +39,8 @@
         public function addFromCartItems() {
             if (parent::isPost()) {
                 $result= $this->order->addFromCartItems(
-                    $this->inputs['cartItemIds']
+                    $this->inputs['cartItemIds'],
+                    $this->inputs['purchaserId']
                 );
 
                 parent::jsonResponse($result,[
