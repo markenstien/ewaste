@@ -10,42 +10,30 @@
             $this->order = model('OrderModel');
         }
 
-
-        /**
-         * data stucture
-            //$post = [
-            //     'items' => [
-            //         ['item_id' => 1, 'quantity' => 3, 'seller_id' => 2],
-            //         ['item_id' => 2, 'quantity' => 1, 'seller_id' => 1],
-            //     ],
-            //     'user_id' => 1,
-            //     'date' => '2022/03/28',
-            //     'discounts' => [
-            //         ['name' => 'student discount 30%', 'amount' => 30]
-            //     ]
-            // ];
-         */
-
         public function index() {
-            $orders = $this->order->getAll();
+            $orders = $this->order->getAll([
+                'where' => $this->inputs,
+                'order' => 'orders.id desc'
+            ]);
             parent::json(...[
                 $orders,
                 TRUE,
                 'all orders'
             ]);
         }
+        /**
+         * checkout 
+         */
         public function add() {
-            /**
-             * post values
-             */
-
-            $result = $this->order->add($this->returnOrderData());
-            parent::json($result);
-            // $post = request()->inputs();
-
-            // if(isSubmitted()) {
-            //     $this->order->add($this->returnOrderData());
-            // }
+            if (parent::isPost()) {
+                $result = $this->order->add($this->returnOrderData());
+                parent::json([
+                    'isOkay' => $result
+                ], true , [
+                    $this->order->getMessageString(),
+                    $this->order->getErrorString()
+                ]);
+            }
         }
 
         private function returnOrderData() {
@@ -65,5 +53,35 @@
                 'user_id' => 5,
                 'date' => '2022-09-01'
             ];
+        }
+
+        public function delete() {
+            if(parent::isPost()) {
+                $result = $this->order->delete($this->inputs['id']);
+                parent::json($result, true,[
+                    $this->order->getMessageString(),
+                    $this->order->getErrorString()
+                ]);
+            }
+        }
+
+        public function cancel() {
+            if (parent::isPost()) {
+                $result = $this->order->cancel($this->input['id'], $this->inputs['remarks']);
+                parent::json($result, true,[
+                    $this->order->getMessageString(),
+                    $this->order->getErrorString()
+                ]);
+            }
+        }
+
+        public function delivered() {
+            if (parent::isPost()) {
+                $result = $this->order->delivered($this->input['id']);
+                parent::json($result, true,[
+                    $this->order->getMessageString(),
+                    $this->order->getErrorString()
+                ]);
+            }
         }
     }

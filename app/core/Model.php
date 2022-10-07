@@ -71,7 +71,13 @@
 				"{$where}"
 			];
 
-			return $this->dbHelper->delete(...$data);
+			$result = $this->dbHelper->delete(...$data);
+			if($result) {
+				$this->addMessage(self::MESSAGE_DELETE_SUCCESS);
+			}else{
+				$this->addError("Delete failed.");
+			}
+			return $result;
 		}
 		
 		public function deleteByKey($keyValuePair = [])
@@ -103,10 +109,16 @@
 
 		public function get($id, $fields = '*')
 		{
+			$where = null;
+			if(is_array($id)) {
+				$where = $this->conditionConvert($id);
+			} else {
+				$where = "id = '{$id}'";
+			}
 			$data = [
 				$this->table ,
 				$fields,
-				"id = '{$id}'"
+				
 			];
 
 			return $this->dbHelper->single(...$data);

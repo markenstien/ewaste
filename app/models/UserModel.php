@@ -87,6 +87,20 @@
 			_mail($user->email, 'User Credential' , $message);
 		}
 
+		public function resetPasswordRequest($email) {
+			$user = parent::get([
+				'email' => $email
+			]);
+
+			if(!$user) {
+				$this->addError("No user found, forget password failed");
+				return false;
+			}
+			//email
+			$tmpPassword = random_number(5);
+			//send to email.
+		}
+
 		private function validate($user_data , $id = null)
 		{
 			if(isset($user_data['email']))

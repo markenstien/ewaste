@@ -28,6 +28,23 @@
             return;
         }
         
+        final protected function jsonResponse($data, $attr = []) {
+            $message = [];
+            if(isset($attr['model'])) {
+                $message = [
+                    $attr['model']->getMessageString(),
+                    $attr['model']->getErrorString()
+                ];
+            }
+
+            if(isset($attr['messages'])) {
+                $message = array_merge($message, $attr['messages']);
+            }
+            $this->json(...[
+                $data, true, $message
+            ]);
+        }
+
         final protected function toJson($data) {
             return json_encode($data);
         }

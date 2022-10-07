@@ -11,6 +11,31 @@
             parent::validateAppUser();
             $this->userModel = model('UserModel');
         }
+        public function authenticate() {
+            $messages = [];
+            if(parent::isPost()) {
+                $user = $this->userModel->get([
+                    'email' =>  $this->input['email']
+                ]);
+                if(!$user) {
+                    $messages = [
+                        "User not found"
+                    ];
+                } else {
+                    $messages = [
+                        "User Authenticated!"
+                    ];
+                }
+                parent::jsonResponse([
+                    'user' => $user
+                ], ['messages' => $messages]);
+            }
+        }
+
+        public function forgetPassword() {
+            //send email
+            
+        }
 
         public function index() {
 

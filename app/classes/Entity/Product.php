@@ -14,6 +14,7 @@
         public $totalReview;
         public $quantity;
         public $isAddedToWishList;
+        public $isPartnerVerified;
 
         public function initConvert($convertData) {
             $this->id = _convert($convertData->id, 'int');
@@ -26,6 +27,7 @@
             $this->totalReview = _convert($convertData->review ?? intval(rand(1,5)), 'int');
             $this->quantity = _convert($convertData->total_stock, 'int');
             $this->isAddedToWishList = false;
+            $this->isPartnerVerified = $convertData->is_partner_verified;
         }
         
     }

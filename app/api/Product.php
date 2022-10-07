@@ -22,10 +22,20 @@
                     'variant' => $keyword
                 ], 'like' , 'OR');
                 $data = $this->itemModel->all($where);
-            } else if(isset($this->inputs['adv'])) {
-                $data = $this->itemModel->all($this->itemModel->getFillablesOnly($this->inputs));
-            }else {
-                $data = $this->itemModel->all();
+            } else {
+                $fetchCondition = [];
+                if(!empty($this->inputs)) {
+                    foreach($this->inputs as $key => $row) {
+                        if(empty($row)) continue;
+                        $fetchCondition[$key] = [
+                            'condition' => 'like',
+                            'concatinator' => 'AND',
+                            'value' => "%{$row}%"
+                        ];
+                    } 
+                }
+
+                $data = $this->itemModel->all($fetchCondition);
             }
 
             if($data) {
@@ -53,10 +63,27 @@
         }
 
         public function edit() {
-
+            if(parent::isPost()) {
+                $result = $this->itemModel->createOrUpdate($this->inputs, $this->inputs['id']);
+                parent::json([
+                    'isOkay' => $result
+                ], true, [
+                    $this->itemModel->getMessageString(),
+                    $this->itemModel->getErrorString()
+                ]);
+            }
         }
 
         public function delete() {
-
+            if(parent::isPost()) {
+                $result = $this->itemModel->delete($this->inputs['id']);
+                parent::json([
+                    'isOkay' => $result
+                ], true, [
+                    $this->itemModel->getMessageString(),
+                    $this->itemModel->getErrorString()
+                ]);
+            }
         }
+        
     }

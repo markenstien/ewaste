@@ -16,3 +16,7 @@ create table payments(
     created_by int(10)
 );
 
+
+
+alter table payments
+    add column is_approved boolean DEFAULT false;

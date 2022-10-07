@@ -24,16 +24,22 @@
         public function createOrUpdate($itemData, $id = null) {
             $retVal = null;
             $_fillables = $this->getFillablesOnly($itemData);
-            $item = $this->getItemByUniqueKey($itemData['sku'], $itemData['name']);
+
+            if(isset($itemData['sku'])){
+                $item = $this->getItemByUniqueKey($itemData['sku'], $itemData['name']);
+            }
 
             if (!is_null($id)) {
-                if($item && ($item->id != $id)) {
-                    $this->addError("SKU Or Name Already exists");
-                    return false;
+                if (isset($item)) {
+                    if($item && ($item->id != $id)) {
+                        $this->addError("SKU Or Name Already exists");
+                        return false;
+                    }
                 }
+                
                 $retVal = parent::update($_fillables, $id);
             } else {
-                if($item) {
+                if(isset($item) && $item) {
                     $this->addError("SKU Or Name Already exists");
                     return false;
                 }
@@ -89,14 +95,10 @@
         //ovveride all parent
         public function all($where = null, $fields = '*', $order_by = null, $limit = null) {
             $sqlSnippet = $this->_productTotalStockSQLSnippet();
+            //aditional
+            $where['is_deleted'] = false;
 
-            if(!is_null($where)){
-				if(is_array($where)) {
-					$where = " WHERE ". $this->conditionConvert($where);
-				}else{
-                    $where = " WHERE {$where}";
-                }
-			}
+            $where = " WHERE ". $this->conditionConvert($where);
 
             if(!is_null($order_by)) {
                 $order_by = " ORDER BY {$order_by}";
@@ -176,5 +178,42 @@
                 }
             }
             return $products;
+        }
+
+        public function delete($id) {
+            $isOkay = parent::update([
+                'is_deleted' => true
+            ], $id);
+
+            if($isOkay) {
+                $this->addMessage("Item deleted.");
+                return true;
+            }else{
+                $this->addError("Item not found.");
+            }
+        }
+
+        //conditional function
+        public function verify($verifierId, $itemId, $verifierRemarks = 'product verified') {
+            $product = parent::get($itemId);
+            if(!$product) {
+                $this->addError("Product no longer exists");
+                return false;
+            }
+
+            if($product->is_partner_verified && !is_null($product->is_partner_verified)) {
+                $this->addError("This product is already verified, unable to verify");
+                return false;
+            }
+
+            if($product->is_deleted) {
+                $this->addError("This product is already deleted, unable to verify");
+                return false;
+            }
+
+            return parent::update([
+                'is_partner_verified' => $verifierId,
+                'verifier_remark' => $verifierRemarks
+            ], $itemId);
         }
     }

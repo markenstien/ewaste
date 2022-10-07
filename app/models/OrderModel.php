@@ -1,5 +1,7 @@
 <?php
-    use Services\OrderService;
+
+use Mpdf\Tag\P;
+use Services\OrderService;
     use Services\StockService;
 
     load(['OrderService', 'StockService'],SERVICES);
@@ -169,16 +171,16 @@
             $order = null;
             $limit = null;
 
-            if(isset($params['where'])) {
+            if(isset($params['where']) && !empty($params['where'])) {
                 $where = " WHERE ".parent::conditionConvert($params['where']);
             }
-            if(isset($params['order'])) {
-                $order = " ORDER ".$params['order'];
+            if(isset($params['order']) && !empty($params['order'])) {
+                $order = " ORDER BY ".$params['order'];
             }
-            if(isset($params['limit'])) {
+            if(isset($params['limit']) && !empty($params['limit'])) {
                 $limit = " LIMIT {$params['limit']}";
             }
-            
+
             $this->db->query(
                 "SELECT orders.*, 
                     concat(seller.firstname, ' ', seller.lastname) as seller_name,
@@ -207,24 +209,63 @@
             $orders = $this->db->resultSet();
 
             if($orders) {
+                $this->paymentModel = model('PaymentModel');
                 foreach($orders as $key => $row) {
                     $row->items = $this->orderItemModel->getOrderItems($row->id);
+                    $row->payment = $this->paymentModel->get([
+                        'order_id' => $row->id
+                    ]);
                 }
             }
-
             return $orders;
         }
-        // public function void($id) {
-        //     $result = parent::update([
-        //         'order_status' => 'cancelled'
-        //     ], $id);
 
-        //     $this->payment = model('PaymentModel');
+        /**
+         * delete order id 
+         * items and payments
+         */
+        public function delete($id) {
+            $order = parent::get($id);
+            if(!$order) {
+                $this->addError("Order not found");
+                return false;
+            }
+            $this->paymentModel = model('PaymentModel');
+            $this->orderItemModel = model('OrderItemModel');
+            //payment deleted
+            $this->paymentModel->delete([
+                'order_id' => $id
+            ]);
+            $this->orderItemModel->delete([
+                'order_id' => $id
+            ]);
 
-        //     $this->payment->update([
-        //         'is_removed' => true
-        //     ], ['order_id' => $id]);
+            $result = parent::delete($id);
 
-        //     return true;
-        // }
+            if(!$result) {
+                $this->addError("Unable to delete order.");
+            }
+            
+            return $result;
+        }
+
+        public function cancel($orderId, $remarks = 'ORDER CANCELLED') {
+            $result = parent::update([
+                'remarks' => $remarks,
+                'status' => 'cancelled'
+            ], $orderId);
+
+            if(!$result) {
+                $this->addError("Order failed to cancel.");
+                return false;
+            }
+            $this->addError("Order has been cancelled");
+            return true;
+        }
+
+        public function delivered($id) {
+            return parent::update([
+                'is_delivered' => true
+            ], $id);
+        }
     }

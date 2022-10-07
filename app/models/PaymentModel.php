@@ -32,6 +32,7 @@
         public function addMultipleOrder($paymentData) {
             
             if(!isset($paymentData['orders'])) {
+                $this->addError("Orders not set!");
                 return false;
             }
 
@@ -47,6 +48,10 @@
                 ]
             ]);
 
+            if(!$ordersInfo) {
+                $this->addError("No such reports");
+                return false;
+            }
             $total = 0;
             foreach($ordersInfo as $key => $row) {
                 $total += $row->net_amount;
@@ -90,5 +95,52 @@
 
         public function generateRefence() {
             return number_series(random_number(7));
+        }
+
+        public function delete($id) {
+            $payment = parent::get($id);
+            if(!$payment) {
+                $this->addError("Payment not found.");
+                return false;
+            }
+
+            $orderModel = model('OrderModel');
+            $order = $orderModel->get([
+                'order_id' => $payment->order_id
+            ]);
+
+            $isOkay = parent::delete($id);
+
+            if ($isOkay) {
+                $this->addMessage("Payment Removed");
+                if ($order) {
+                    $orderModel->update([
+                        'is_paid' => false
+                    ], $order->id);
+                }
+                return true;
+            } else {
+                $this->addError("unable to delete payments");
+                return false;
+            }
+        }
+
+        public function approve($id) {
+            $payment = parent::get($id);
+            $result = parent::update([
+                'is_approved' => true
+            ], $id);
+
+            if(!$result) {
+                $this->addError("Payment approved failed.");
+                return false;
+            }else{
+                $this->orderModel = model('OrderModel');
+                $this->orderModel->update([
+                    'is_paid' => true,
+                ], $payment->order_id);
+                $this->addMessage("Payment approved");
+                return true;
+            }
         }
     }

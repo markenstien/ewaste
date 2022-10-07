@@ -17,3 +17,14 @@ CREATE TABLE `items` (
   `created_at` timestamp DEFAULT now(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8
+
+
+alter table items
+  add column is_deleted boolean DEFAULT false;
+
+
+/**
+conditional
+*//
+alter table items
+  add column verifier_remark text;
