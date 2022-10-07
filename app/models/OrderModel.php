@@ -31,7 +31,8 @@ use Services\OrderService;
             foreach ($items as $key => $row) {
                 if ($row['quantity'] > 0) {
                     //check item quantit
-                    $isQuantityOkay = $this->itemModel->checkQuantity($row['item_id'], $row['quantity']);
+                    // $isQuantityOkay = $this->itemModel->checkQuantity($row['item_id'], $row['quantity']);
+                    $isQuantityOkay = true;
                     if(!$isQuantityOkay) {
                         //skip item
                         $this->addError($this->itemModel->getErrorString());
@@ -219,24 +220,6 @@ use Services\OrderService;
             }
             return $orders;
         }
-
-        // return [
-        //     'items' => [
-        //         [
-        //             'item_id' => 1,
-        //             'quantity' => 1,
-        //             'seller_id' => 2,
-        //         ],
-        //         [
-        //             'item_id' => 3,
-        //             'quantity' => 2,
-        //             'seller_id' => 1,
-        //         ]
-        //     ],
-        //     'user_id' => 5,
-        //     'date' => '2022-09-01'
-        // ];
-
         //convert to order 
         public function addFromCartItems($cartItemIds = [], $purchaserId) {
 
@@ -247,7 +230,7 @@ use Services\OrderService;
 
             $this->cartItemModel = model('CartItemModel');
 
-            $carItems = $this->cartItemModel->getAll([
+            $cartItems = $this->cartItemModel->getAll([
                 'where' => [
                     'cart_item.id' => [
                         'condition' => 'in',
@@ -256,7 +239,7 @@ use Services\OrderService;
                 ]
             ]);
 
-            if(!$carItems) {
+            if(empty($cartItems)) {
                 $this->addError("Cart Items not found!");
                 return false;
             }
@@ -267,9 +250,9 @@ use Services\OrderService;
                 'date' => now()
             ];
             //prepare cart-item-to-orders
-            foreach($carItems as $key => $cartItem) {
-                array_push($orderItems, [
-                    'item_id' => $cartItem->productId,
+            foreach($cartItems as $key => $cartItem) {
+                array_push($orderItems['items'], [
+                    'item_id' => $cartItem->id,
                     'quantity' => $cartItem->quantity,
                     'seller_id' => $cartItem->product_owner_id
                 ]);
