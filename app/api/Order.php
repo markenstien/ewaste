@@ -36,6 +36,18 @@
             }
         }
 
+        public function addFromCartItems() {
+            if (parent::isPost()) {
+                $result= $this->order->addFromCartItems(
+                    $this->inputs['cartItemIds']
+                );
+
+                parent::jsonResponse($result,[
+                    'model' => $this->order
+                ]);
+            }
+        }
+
         private function returnOrderData() {
             return [
                 'items' => [
@@ -58,9 +70,8 @@
         public function delete() {
             if(parent::isPost()) {
                 $result = $this->order->delete($this->inputs['id']);
-                parent::json($result, true,[
-                    $this->order->getMessageString(),
-                    $this->order->getErrorString()
+                parent::jsonResponse($result,[
+                    'model' => $this->order
                 ]);
             }
         }
@@ -68,9 +79,8 @@
         public function cancel() {
             if (parent::isPost()) {
                 $result = $this->order->cancel($this->input['id'], $this->inputs['remarks']);
-                parent::json($result, true,[
-                    $this->order->getMessageString(),
-                    $this->order->getErrorString()
+                parent::jsonResponse($result,[
+                    'model' => $this->order
                 ]);
             }
         }
@@ -78,9 +88,8 @@
         public function delivered() {
             if (parent::isPost()) {
                 $result = $this->order->delivered($this->input['id']);
-                parent::json($result, true,[
-                    $this->order->getMessageString(),
-                    $this->order->getErrorString()
+                parent::jsonResponse($result,[
+                    'model' => $this->order
                 ]);
             }
         }

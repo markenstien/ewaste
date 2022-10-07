@@ -8,7 +8,7 @@
             $cartItem = parent::get($data['id']);
             $quantity = $cartItem->quantity;
             if($data['type'] == 'deduct') {
-                if($quantity > 2) {
+                if($quantity >= 2) {
                     $quantity -= 1;
                 }else{
                     //error
@@ -53,6 +53,41 @@
             return $item ? $item[0] : false;
         }
 
+        public function getAll($params = []) {
+            $where = null;
+            $order = null;
+            $limit = null;
+
+            if (!isset($params['where']) && !empty($params['where'])) {
+                $where = " WHERE ".$this->conditionConvert($where);
+            }
+            
+            if(!isset($params['order']) && !empty($params['order'])) {
+                $order = " ORDER BY ".$params['order'];
+            }
+
+            if(!isset($params['limit']) && !empty($params['limit'])) {
+                $limit = " LIMIT ".$params['limit'];
+            }
+
+            $this->db->query(
+                "SELECT item.*, item.user_id as product_owner_id,
+                    cart_item.id as cart_item_id,
+                    quantity,cart_item.date_created as cart_item_date,
+                    category.name as category_name
+                    FROM {$this->table} as cart_item
+
+                    LEFT JOIN items as item 
+                    ON item.id = cart_item.item_id
+
+                    LEFT JOIN categories as category
+                    ON category.id = item.category_id
+                    {$where} {$order} {$limit} "
+            );
+
+            return $this->db->resultSet();
+        }
+
         public function getItems($cartId, $otherParams = []) {
 
             $where = [
@@ -66,7 +101,7 @@
             $where = " WHERE " . parent::conditionConvert($where);
 
             $this->db->query(
-                "SELECT item.*, cart_item.id as cart_item_id,
+                "SELECT item.*, item.user_id as product_owner_id, cart_item.id as cart_item_id,
                     quantity,cart_item.date_created as cart_item_date,
                     category.name as category_name
                     FROM {$this->table} as cart_item

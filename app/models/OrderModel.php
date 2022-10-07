@@ -220,6 +220,63 @@ use Services\OrderService;
             return $orders;
         }
 
+        // return [
+        //     'items' => [
+        //         [
+        //             'item_id' => 1,
+        //             'quantity' => 1,
+        //             'seller_id' => 2,
+        //         ],
+        //         [
+        //             'item_id' => 3,
+        //             'quantity' => 2,
+        //             'seller_id' => 1,
+        //         ]
+        //     ],
+        //     'user_id' => 5,
+        //     'date' => '2022-09-01'
+        // ];
+
+        //convert to order 
+        public function addFromCartItems($cartItemIds = [], $purchaserId) {
+
+            if (empty($cartItemIds)) {
+                $this->addError("Cart Items not found!");
+                return false;
+            }
+
+            $this->cartItemModel = model('CartItemModel');
+
+            $carItems = $this->cartItemModel->getAll([
+                'where' => [
+                    'item.id' => [
+                        'condition' => 'in',
+                        'value' => $cartItemIds
+                    ]
+                ]
+            ]);
+
+            if(!$carItems) {
+                $this->addError("Cart Items not found!");
+                return false;
+            }
+
+            $orderItems = [
+                'items' => [],
+                'user_id' => $purchaserId,
+                'date' => now()
+            ];
+            //prepare cart-item-to-orders
+            foreach($carItems as $key => $cartItem) {
+                array_push($orderItems, [
+                    'item_id' => $cartItem->productId,
+                    'quantity' => $cartItem->quantity,
+                    'seller_id' => $cartItem->product_owner_id
+                ]);
+            }
+            //use order
+            return $this->add($orderItems);
+        }
         /**
          * delete order id 
          * items and payments
