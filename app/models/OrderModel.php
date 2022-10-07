@@ -249,7 +249,7 @@ use Services\OrderService;
 
             $carItems = $this->cartItemModel->getAll([
                 'where' => [
-                    'item.id' => [
+                    'cart_item.id' => [
                         'condition' => 'in',
                         'value' => $cartItemIds
                     ]
