@@ -18,7 +18,8 @@
 			$this->method  = $_SERVER['REQUEST_METHOD'];
 
 			$this->runTimeVars = [
-				'url' , 'csrftoken' , 'phpsessid' , '_kdk_supa_cookie_dataprivacy'
+				'url' , 'csrftoken' , 'phpsessid' , '_kdk_supa_cookie_dataprivacy',
+				'appKey'
 			];
 		}
 		

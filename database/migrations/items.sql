@@ -22,9 +22,8 @@ CREATE TABLE `items` (
 alter table items
   add column is_deleted boolean DEFAULT false;
 
-
 /**
 conditional
-*//
+*/
 alter table items
   add column verifier_remark text;
