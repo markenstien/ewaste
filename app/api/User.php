@@ -15,16 +15,25 @@
             $messages = [];
             if(parent::isPost()) {
                 $user = $this->userModel->get([
-                    'email' =>  $this->input['email']
+                    'email' =>  $this->inputs['email']
                 ]);
                 if(!$user) {
                     $messages = [
                         "User not found"
                     ];
                 } else {
-                    $messages = [
-                        "User Authenticated!"
-                    ];
+                    if(isEqual($user->password, $this->inputs['password'])) {
+                        $messages = [
+                            "User Authenticated!"
+                        ];   
+                    }else{
+                        $messages = [
+                            "Incorrect Password"
+                        ];
+                        
+                        $user = false;
+                    }
+                    
                 }
                 parent::jsonResponse([
                     'user' => $user
