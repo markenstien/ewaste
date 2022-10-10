@@ -173,6 +173,11 @@ use Services\OrderService;
             $limit = null;
 
             if(isset($params['where']) && !empty($params['where'])) {
+                if(isset($params['where']['id'])) {
+                    $params['where']['orders.id'] = is_array($params['where']['id']) ?
+                        $params['where']['id']['value'] : $params['where']['id'];
+                    unset($params['where']['id']);
+                }
                 $where = " WHERE ".parent::conditionConvert($params['where']);
             }
             if(isset($params['order']) && !empty($params['order'])) {
