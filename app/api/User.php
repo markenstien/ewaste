@@ -15,14 +15,14 @@
             $messages = [];
             if(parent::isPost()) {
                 $user = $this->userModel->get([
-                    'email' =>  $this->inputs['email']
+                    'email' =>  trim($this->inputs['email'])
                 ]);
                 if(!$user) {
                     $messages = [
                         "User not found"
                     ];
                 } else {
-                    if(isEqual($user->password, $this->inputs['password'])) {
+                    if(isEqual($user->password, trim($this->inputs['password']))) {
                         $messages = [
                             "User Authenticated!"
                         ];   
