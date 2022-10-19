@@ -17,6 +17,9 @@
                 $user = $this->userModel->get([
                     'email' =>  trim($this->inputs['email'])
                 ]);
+
+                dd($user);
+
                 if(!$user) {
                     $messages = [
                         "User not found"

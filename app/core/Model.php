@@ -118,7 +118,7 @@
 			$data = [
 				$this->table ,
 				$fields,
-				
+				$where
 			];
 
 			return $this->dbHelper->single(...$data);
