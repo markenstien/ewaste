@@ -16,12 +16,19 @@
 
         public function index() {
             $userId = $this->request->get('userId');
-            $carts = $this->cart->getCart($userId);
+            $cart = $this->cart->getCart($userId);
 
-            $carItems = $carts->items;
-            $carItems = $this->productModel->appendImages($carItems,"URL_ONLY");
-            $carts = $this->cartEntity->convertItems($carItems);
-            parent::json($carts);
+            if(!$cart) {
+                parent::jsonResponse([], ['messages' => [
+                    'cart has no item'
+                ]]);
+            } else {
+                $carItems = $cart->items;
+                $carItems = $this->productModel->appendImages($carItems,"URL_ONLY");
+                $carts = $this->cartEntity->convertItems($carItems);
+                parent::json($carts);  
+            }
+            
         }
 
         public function addItem() {
