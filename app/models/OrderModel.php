@@ -216,16 +216,29 @@ use Services\OrderService;
             $orders = $this->db->resultSet();
 
             if($orders) {
+                $totalAmount = 0;
+                $subTotal = 0;
+                $paymentTotal = 0;
+
                 $this->paymentModel = model('PaymentModel');
                 foreach($orders as $key => $row) {
                     $rowItems = $this->orderItemModel->getOrderItems($row->id);
-                    $row->items = $rowItems;
-                    if(!empty($rowItems)) {
-                        $this->items = $this->itemModel->appendImages($rowItems, 'URL_ONLY' , 'item_id');
-                    }
-                    $row->payment = $this->paymentModel->get([
+                    $rowPayment = $this->paymentModel->get([
                         'order_id' => $row->id
                     ]);
+                    $row->items = $rowItems;
+                    if (!empty($rowItems)) {
+                        $this->items = $this->itemModel->appendImages($rowItems, 'URL_ONLY' , 'item_id');
+                        foreach ($rowItems as $itemKey => $itemRow) {
+                            $totalAmount += $itemRow->quantity * $itemRow->price;
+                        }
+                    }
+                    $row->payment = $rowPayment;
+                    $paymentTotal = $rowPayment->amount ?? 0;
+
+                    $row->totalAmount = $totalAmount;
+                    $row->paymentTotal = (double) $paymentTotal;
+                    $row->subTotal = $totalAmount - $paymentTotal;
                 }
             }
             return $orders;
