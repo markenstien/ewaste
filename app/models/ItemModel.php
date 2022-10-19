@@ -165,9 +165,9 @@
             return true;
         }
 
-        public function appendImages($products = [], $type = null) {
+        public function appendImages($products = [], $type = null, $itemId = 'id') {
             foreach($products as $key => $row) {
-                $images = $this->getImages($row->id);
+                $images = $this->getImages($row->$itemId);
                 $row->images = $images;
                 if($type == 'URL_ONLY') {
                     if($images) {

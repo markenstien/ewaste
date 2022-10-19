@@ -15,6 +15,7 @@
                 'where' => $this->inputs,
                 'order' => 'orders.id desc'
             ]);
+
             parent::json(...[
                 $orders,
                 TRUE,

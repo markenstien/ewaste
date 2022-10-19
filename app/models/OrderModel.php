@@ -168,6 +168,7 @@ use Services\OrderService;
 
         public function getAll($params = []) {
             $this->orderItemModel = model('OrderItemModel');
+            $this->itemModel = model('ItemModel');
             $where = null;
             $order = null;
             $limit = null;
@@ -217,7 +218,11 @@ use Services\OrderService;
             if($orders) {
                 $this->paymentModel = model('PaymentModel');
                 foreach($orders as $key => $row) {
-                    $row->items = $this->orderItemModel->getOrderItems($row->id);
+                    $rowItems = $this->orderItemModel->getOrderItems($row->id);
+                    $row->items = $rowItems;
+                    if(!empty($rowItems)) {
+                        $this->items = $this->itemModel->appendImages($rowItems, 'URL_ONLY' , 'item_id');
+                    }
                     $row->payment = $this->paymentModel->get([
                         'order_id' => $row->id
                     ]);

@@ -43,13 +43,17 @@
 			$fillable_datas = $this->getFillablesOnly($user_data);
 			$validated = $this->validate($fillable_datas, $id);
 
+			if(!isset($user_data['username'])) {
+				$user_data['username'] = substr($user_data['firstname'],1) .''. substr($user_data['lastname']);
+				$user_data['username'] = strtoupper($user_data['username'].random_number(4));
+			}
 			if(!is_null($id))
 			{
 				//change password also
 				if(empty($fillable_datas['password']) )
 					unset($fillable_datas['password']);
 				$res = parent::update($fillable_datas , $id);
-				if( isset($user_data['profile']) ){
+				if(isset($user_data['profile'])){
 					$this->uploadProfile('profile' , $id);
 				}
 				$user_id = $id;
@@ -105,7 +109,7 @@
 		{
 			if(isset($user_data['email']))
 			{
-				$is_exist = $this->getByKey('email' , $user_data['email'])[0] ?? '';
+				$is_exist = $this->getByKey('email' , $user_data['email'])[0] ?? '';        	
 
 				if( $is_exist && !isEqual($is_exist->id , $id) ){
 					$this->addError("Email {$user_data['email']} already used");
