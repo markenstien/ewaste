@@ -19,7 +19,7 @@
 
 		public function login()
 		{
-			if( isSubmitted() )
+			if(isSubmitted())
 			{
 				$post = request()->posts();
 

@@ -144,7 +144,8 @@
 
         public function getOrderItems($id) {
             $this->db->query(
-                "SELECT item.name, item.sku, oi.*
+                "SELECT item.name, item.sku, 
+                    item.is_partner_verified, oi.*
                     FROM {$this->table} as oi 
 
                     LEFT JOIN items as item 

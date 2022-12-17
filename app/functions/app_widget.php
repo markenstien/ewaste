@@ -163,9 +163,9 @@
 
     
 
-    function wDivider()
+    function wDivider($size = '30')
     {
         return <<<EOF
-            <div style="margin-top:30px"> </div>
+            <div style="margin-top:{$size}px"> </div>
         EOF;
     }

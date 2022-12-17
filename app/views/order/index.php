@@ -24,21 +24,7 @@
                                 <td><?php echo $row->created_at?></td>
                                 <td><?php echo amountHTML($row->net_amount)?></td>
                                 <td>
-                                    <?php 
-										$anchor_items = [
-											[
-												'url' => _route('receipt:order' , $row->id),
-												'text' => 'Receipt',
-												'icon' => 'eye'
-											],
-
-											[
-												'url' => _route('order:show', $row->id),
-												'text' => 'Preview',
-												'icon' => 'eye'
-											]
-										];
-									echo anchorList($anchor_items)?>
+                                    <?php echo wLinkDefault(_route('order:show', $row->id), 'Show')?>
                                 </td>
                             </tr>
                         <?php endforeach?>

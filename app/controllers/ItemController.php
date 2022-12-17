@@ -1,9 +1,12 @@
 <?php
     load(['ItemForm'],APPROOT.DS.'form');
+    load(['CategoryService', 'UserService'],SERVICES);
     load(['CategoryService'],SERVICES);
 
     use Form\ItemForm;
     use Services\CategoryService;
+    use Services\UserService;
+
 
     class ItemController extends Controller
     {
@@ -16,8 +19,29 @@
         }
 
         public function index() {
-            $this->data['items'] = $this->model->all();
+            if (isEqual($this->data['whoIs']->user_type, UserService::CONSUMER)) {
+                $this->data['items'] = $this->model->all([
+                    'user_id' => $this->data['whoIs']->id
+                ]);
+            } else {
+                $this->data['items'] = $this->model->all();
+            }
             return $this->view('item/index',$this->data);
+        }
+
+        public function verifiedByYou() {
+
+            $this->data['items'] = $this->model->all([
+                'is_partner_verified' => $this->data['whoIs']->id
+            ]);
+
+            return $this->view('item/index', $this->data);
+        }
+
+        public function verify($id) {
+            $this->model->verify(whoIs('id'), $id);
+            Flash::set("You verified this product");
+            return request()->return();
         }
 
         public function create(){
@@ -88,5 +112,32 @@
             $_attachmentForm->setValue('global_key', CategoryService::ITEM);
             
             return $_attachmentForm;
+        }
+
+        public function catalog() {
+            if (isEqual($this->data['whoIs']->user_type, UserService::CONSUMER)) {
+                $this->data['items'] = $this->model->all([
+                    'item.user_id' => [
+                        'condition' => 'not equal',
+                        'value' => $this->data['whoIs']->id
+                    ]
+                ], 'id desc, item.name desc');
+            } else {
+                $this->data['items'] = $this->model->all();
+            }
+
+            
+            if ($this->data['items']) {
+                $this->data['items'] = $this->model->appendImages($this->data['items'],'URL_ONLY');
+            }
+            return $this->view('item/catalog', $this->data);
+        }
+
+        public function catalogShow($id) {
+            $item = $this->model->get($id);
+            $item->images = $this->model->getImages($id);
+
+            $this->data['item'] = $item;
+            return $this->view('item/catalog_show', $this->data);
         }
     }

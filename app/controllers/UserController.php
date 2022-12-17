@@ -99,8 +99,10 @@
 
 		public function show($id)
 		{
+			$req = request()->inputs();
 			$user = $this->model->get($id);
 
+			$viewPage = $req['view_page'] ?? 'products';
 			if(!$user) {
 				Flash::set(" This user no longer exists " , 'warning');
 				return request()->return();
@@ -114,6 +116,16 @@
 			$this->data['number_of_days_remaining'] = $number_of_days_remaining;
 			$this->data['number_of_days_after_deployment'] = $number_of_days_after_deployment;
 
+			if(isEqual($viewPage,'commission')) {
+				if (!isset($this->commissionModel)) {
+					$this->commissionModel = model('CommissionModel');
+				}
+				$this->data['commissions'] = $this->commissionModel->all([
+					'commission.user_id' => $this->data['whoIs']->id
+				]);
+			}
+
+			$this->data['viewPage'] = $viewPage;
 			return $this->view('user/show' , $this->data);
 		}
 
@@ -121,6 +133,18 @@
 		{
 			$this->model->sendCredential($id);
 			Flash::set("Credentials has been set to the user");
+			return request()->return();
+		}
+
+		public function toPartner($id) {
+			$this->model->toPartner($id);
+			Flash::set("User set to partner");
+			return request()->return();
+		}
+
+		public function removePartner($id) {
+			$this->model->removePartner($id);
+			Flash::set("User removed as partner");
 			return request()->return();
 		}
 	}

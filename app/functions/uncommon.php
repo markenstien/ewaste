@@ -1,5 +1,8 @@
 <?php
-    
+
+use Services\UserService;
+load(['UserService'], SERVICES);
+
     function __($data)
     {
         if( is_array($data) )
@@ -337,6 +340,36 @@
             return false;
 
         return is_null($key) ? $auth : $auth->$key;
+    }
+
+    function is_partner($user = null) {
+        if(!is_null($user)) {
+            if(isEqual($user->is_partner, UserService::NOT_PARTNER_VALUE)) {
+                return false;
+            }
+            return true;
+        }
+
+        $whoIs = whoIs();
+
+        if(isEqual($whoIs->is_partner, UserService::NOT_PARTNER_VALUE)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    function is_user_type($userType = [UserService::ADMINISTRATOR, UserService::VENDOR_STAFF], $user = null) {
+        $whoIs = whoIs();
+        if(!is_null($user)) {
+            $whoIs = $user;
+        }
+
+        if(isEqual($whoIs->user_type, $userType)) {
+            return true;
+        }
+
+        return false;
     }
 
     function getRowObject($arrayObject , $property)

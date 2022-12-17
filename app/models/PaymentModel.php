@@ -8,10 +8,6 @@
             'reference',
             'amount',
             'payment_method',
-            'payer_name',
-            'mobile_number',
-            'address',
-            'remarks',
             'organization',
             'account_number',
             'external_reference',
@@ -94,7 +90,7 @@
         }
 
         public function generateRefence() {
-            return number_series(random_number(7));
+            return referenceSeries(parent::lastId(), 4, date('y'), date('m'));
         }
 
         public function delete($id) {

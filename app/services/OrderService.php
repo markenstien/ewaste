@@ -32,4 +32,11 @@
             $summary = $orderItemModel->getItemSummary($items); 
             return $summary['netAmount'];
         }
+
+        public static function verifierCommission($amount) {
+            return [
+                'commissionPercentage' => '12%',
+                'commissionAmount' => $amount * .18
+            ];
+        }
     }

@@ -59,7 +59,7 @@ use Services\OrderService;
 
             //create different orders by different merchants
             foreach ($orderDataByMerch as $sellerId => $items) {
-                $orderReference = referenceSeries(parent::lastId(), 5, date('y-m').'-');
+                $orderReference = $this->generateReference();
                 $totalAmount = 0;
                 $orderItems = [];
                 $orderInstance = [
@@ -330,5 +330,113 @@ use Services\OrderService;
             return parent::update([
                 'is_delivered' => true
             ], $id);
+        }
+
+        /**
+         * accepts only 1 product 
+         * quantity and purchaser
+         */
+        public function singleOrder($orderData) {
+
+            if(!isset($this->userModel)) {
+                $this->userModel = model('UserModel');
+            }
+            if(!isset($this->itemModel)) {
+                $this->itemModel = model('ItemModel');
+            }
+
+            if(!isset($this->stockModel)) {
+                $this->stockModel = model('StockModel');
+            }
+
+            if(!isset($this->orderItemModel)) {
+                $this->orderItemModel = model('OrderItemModel');
+            }
+
+            $item  = $this->itemModel->get($orderData['item_id']);
+
+            if (!$item) {
+                $this->addError("Item not exist.");
+                return false;
+            }
+            
+            $buyer = $this->userModel->get($orderData['buyer_id']);
+            $verifier = $item->verifier ?? null;
+            $seller = $this->userModel->get($item->user_id);
+            $quantity = $orderData['quantity'];
+
+            $totalAmount = $item->sell_price * $orderData['quantity'];
+
+            $reference = $this->generateReference();
+
+            $orderId = parent::store([
+                'reference' => $reference,
+                'seller_id' => $seller->id,
+                'customer_id' => $buyer->id,
+                'gross_amount' => $totalAmount,
+                'net_amount' => $totalAmount,
+                'status' => 'pending'
+            ]);
+
+            if($orderId) {
+                $this->orderItemModel->addItems($orderId, [
+                    [
+                        'order_id' => $orderId,
+                        'item_id' => $item->id,
+                        'quantity' => $quantity,
+                        'price' => $item->sell_price,
+                        'seller_id' => $seller->id
+                    ]
+                ]);
+            }
+            $deductId = $this->stockModel->createOrUpdate([
+                'item_id' => $item->id,
+                'quantity' => $quantity,
+                'date' => today(),
+                'entry_origin' => StockService::SALES,
+                'entry_type' => StockService::ENTRY_DEDUCT
+            ]);
+
+            //if verifier exist
+            if(!is_null($verifier)) {
+                //add commission
+                if(!isset($this->commissionModel)) {
+                    $this->commissionModel = model('CommissionModel');
+                }
+
+                $comission = OrderService::verifierCommission($totalAmount);
+                $comissionAmount = $comission['commissionAmount'];
+
+                $comission = $this->commissionModel->createOrUpdate([
+                    'user_id' => $verifier->id,
+                    'amount'  => $comissionAmount,
+                    'order_id' => $orderId,
+                    'status' => 'active'
+                ]);
+            }
+
+            if($orderId) {
+                $this->addMessage("Order: #{$reference} success");
+                return $orderId;
+            } else {
+                $this->addError("Order failed");
+                return false;
+            }
+        }
+
+        public function toPaid($id){
+            $order = parent::get($id);
+            if($order->is_paid) {
+                $this->addError("Order is already paid");
+                return false;
+            }
+            return parent::update([
+                'is_paid' => true,
+                'status' => 'completed'
+            ], $id);
+        }
+
+        private function generateReference() {
+            return referenceSeries(parent::lastId(), 5, date('y-m').'-');
         }
     }

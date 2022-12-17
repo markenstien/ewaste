@@ -158,31 +158,52 @@ License: For each use you must have a valid license purchased only from above li
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="<?php echo _route('item:catalog')?>">
+                                    <i class="link-icon" data-feather="box"></i>
+                                    <span class="menu-title">Catalog</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="<?php echo _route('order:index')?>">
                                     <i class="link-icon" data-feather="box"></i>
                                     <span class="menu-title">Orders</span>
                                 </a>
                             </li>
+                            <?php if(is_user_type()):?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo _route('payment:index')?>">
                                     <i class="link-icon" data-feather="box"></i>
                                     <span class="menu-title">Payment</span>
                                 </a>
                             </li>
-
+                            <?php endif?>
+                            
+                            <?php if(is_user_type()):?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo _route('user:index')?>">
                                     <i class="link-icon" data-feather="box"></i>
                                     <span class="menu-title">Users</span>
                                 </a>
                             </li>
+                            <?php endif?>
 
+                            <?php if(is_partner()) :?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo _route('commission:index')?>">
+                                    <i class="link-icon" data-feather="box"></i>
+                                    <span class="menu-title">Commissions</span>
+                                </a>
+                            </li>
+                            <?php endif?>
+                            
+                            <?php if(is_user_type()):?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo _route('category:index')?>">
                                     <i class="link-icon" data-feather="box"></i>
                                     <span class="menu-title">Category</span>
                                 </a>
                             </li>
+                            <?php endif?>
 
                             <?php if(isEqual($auth->user_type, ['admin'])) :?>
                             <li class="nav-item">

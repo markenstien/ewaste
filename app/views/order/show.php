@@ -9,70 +9,95 @@
                 </div>
             <?php endif?>
             <h1>#<?php echo $order->reference?></h1>
-            <p>Order Receipt</p>
+            <p>Order Receipt : <?php echo $order->status?> | Payment Status : <?php echo $order->is_paid ? 'PAID' : 'UN-PAID'?> | Delivery Status : <?php echo $order->is_delivered ? 'DELIVERED' : 'ON-GOING'?></p>
         </div>
         <h3>Customer Info</h3>
-        <table class="table table-bordered">
-            <tr>
-                <td>Customer Name : </td>
-                <td><?php echo $order->customer_name?></td>
-            </tr>
-            <tr>
-                <td>Mobile Number : </td>
-                <td><?php echo $order->customer_phone?></td>
-            </tr>
-            <tr>
-                <td>Address : </td>
-                <td><?php echo $order->customer_address?></td>
-            </tr>
-        </table>
-        <h3>Particulars</h3>
-        <table class="table-bordered table">
-            <thead>
-                <th>Quantity</th>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Total</th>
-            </thead>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tr>
+                    <td>Customer Name : </td>
+                    <td><?php echo $order->customer_name?></td>
+                </tr>
+                <tr>
+                    <td>Mobile Number : </td>
+                    <td><?php echo $order->customer_phone?></td>
+                </tr>
+                <tr>
+                    <td>Address : </td>
+                    <td><?php echo $order->customer_address?></td>
+                </tr>
+            </table>
+        </div>
+        <h3 class="mt-5">Particulars</h3>
+        <div class="table-responsive">
+            <table class="table-bordered table">
+                <thead>
+                    <th>Quantity</th>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </thead>
 
-            <tbody>
-                <?php foreach($items as $key => $row):?>
-                    <tr>
-                        <td><?php echo $row->quantity?></td>
-                        <td><?php echo $row->name?></td>
-                        <td><?php echo amountHTML($row->price)?></td>
-                        <td><?php echo amountHTML($row->price * $row->quantity)?></td>
-                    </tr>
-                <?php endforeach?>
-            </tbody>
-        </table>
+                <tbody>
+                    <?php foreach($items as $key => $row):?>
+                        <tr>
+                            <td><?php echo $row->quantity?></td>
+                            <td><?php echo $row->name?></td>
+                            <td><?php echo amountHTML($row->price)?></td>
+                            <td><?php echo amountHTML($row->price * $row->quantity)?></td>
+                        </tr>
+                    <?php endforeach?>
+                </tbody>
+            </table>
+        </div>
 
-
-        <section>
-            <h1>Total : <?php echo amountHTML($order->net_amount)?></h1>
+        <section class="mt-3">
+            <h2>Total : <?php echo amountHTML($order->net_amount)?></h2>
         </section>
 
+        <?php if(isEqual(whoIs('user_type'), 'CONSUMER')) :?>
+            <div class="bg-primary" style="padding: 10px;">
+                <h5>Verifier Commission</h5>
+                <?php foreach($items as $key => $row) :?>
+                    <?php $commission = $orderService::verifierCommission($row->price)?>
+                    <?php if($row->verifier) :?>
+                        <h3>Total Commission(<?php echo $commission['commissionPercentage']?>): <?php echo $commission['commissionAmount']?> </h3>
+                        <div>
+                            <h5>Verifier : <?php echo $row->verifier->firstname . ' '.$row->verifier->lastname ?></h5>
+                        </div>
+                    <?php endif?>
+                <?php endforeach?>
+            </div>
+        <?php endif?>
         <section class="mt-2">
-            <h3>Payment</h3>
-            <p>Total : 
-                #<?php echo $payment->reference?>(Keep this reference number) Total Amount Paid : <?php echo amountHTML($payment->amount)?> | Method : <?php echo $payment->payment_method?>
-                <?php
-                    if($payment->organization) {
-                        echo '| ORG : '. $payment->organization . ' | REFERENCE : '. $payment->external_reference;
-                    }
-                ?>
-            </p>
-            <?php if($payment->is_removed) :?>
-                <h5 class="text-danger">Payment Removed</h5>
+            <h3 class="bg-success" style="padding: 10px;">Payment</h3>
+            <?php if($payment) :?>
+                <p>Total : 
+                    #<?php echo $payment->reference?>(Keep this reference number) Total Amount Paid : <?php echo amountHTML($payment->amount)?> | Method : <?php echo $payment->payment_method?>
+                    <?php
+                        if($payment->organization) {
+                            echo '| ORG : '. $payment->organization . ' | REFERENCE : '. $payment->external_reference;
+                        }
+                    ?>
+                </p>
+                <?php if($payment->is_removed) :?>
+                    <h5 class="text-danger">Payment Removed</h5>
+                <?php endif?>
+                <?php else:?>
+                    <h4>No Paymnet</h4>
+                    <a href="<?php echo _route('payment:create', null, [
+                        'order_id' => $order->id
+                    ])?>">Create Payment</a>
             <?php endif?>
         </section>
 
+        <section class="mt-2">
+            <h3 class="bg-success" style="padding: 10px;">Delivery</h3>
+            <a href="<?php echo _route('order:delivered', $order->id)?>">Delivered</a>
+        </section>
+
         <?php if(!isEqual($order->status, 'cancelled')) :?>
-            <section class="mt-5">
-                <a href="<?php echo _route('order:void', $order->id, [
-                    'csrfToken' => csrfGet()
-                ])?>" class="btn btn-danger btn-sm form-verify" data-message="Payment will be removed as well">VOID ORDER</a>
-            </section>
+            
         <?php endif?>
     </div>
 </div>

@@ -18,7 +18,9 @@
 		'create' => $controller.'/create',
 		'delete' => $controller.'/destroy',
 		'show'   => $controller.'/show',
-		'sendCredential' => $controller.'/sendCredential'
+		'sendCredential' => $controller.'/sendCredential',
+		'toPartner' => $controller.'/toPartner',
+		'removePartner' => $controller.'/removePartner',
 	];
 
 	$controller = '/StockController';
@@ -66,7 +68,10 @@
 		'create' => $controller.'/create',
 		'delete' => $controller.'/destroy',
 		'download' => $controller.'/download',
-		'show'   => $controller.'/show'
+		'show'   => $controller.'/show',
+		'catalog'   => $controller.'/catalog',
+		'catalog-detail'   => $controller.'/catalogShow',
+		'verify' => $controller .'/verify'
 	];
 
 	$controller = '/TransactionController';
@@ -99,6 +104,8 @@
 		'delete' => $controller.'/destroy',
 		'show'   => $controller.'/show',
 		'void'   => $controller.'/voidOrder',
+		'buy-now'   => $controller.'/buyNow',
+		'delivered' => $controller. '/delivered'
 	];
 
 	$controller = '/PaymentController';
@@ -109,6 +116,17 @@
 		'delete' => $controller.'/destroy',
 		'show'   => $controller.'/show'
 	];
+
+
+	$controller = '/CommissionController';
+	$routes['commission'] = [
+		'index' => $controller.'/index',
+		'order' => $controller.'/orderReceipt',
+		'create' => $controller.'/create',
+		'delete' => $controller.'/destroy',
+		'show'   => $controller.'/show'
+	];
+	
 
 	$controller = '/SupplyOrderController';
 	$routes['supply-order'] = [

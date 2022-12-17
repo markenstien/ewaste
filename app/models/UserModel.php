@@ -44,7 +44,7 @@
 			$validated = $this->validate($fillable_datas, $id);
 
 			if(!isset($user_data['username'])) {
-				$user_data['username'] = substr($user_data['firstname'],1) .''. substr($user_data['lastname']);
+				$user_data['username'] = substr($user_data['firstname'],1) .''. substr($user_data['lastname'], 1);
 				$user_data['username'] = strtoupper($user_data['username'].random_number(4));
 			}
 			if(!is_null($id))
@@ -88,7 +88,7 @@
 				</div>
 			EOF;
 
-			_mail($user->email, 'User Credential' , $message);
+			_mail($user->email, 'User Credential' , $body);
 		}
 
 		public function resetPasswordRequest($email) {
@@ -306,7 +306,7 @@
 		}
 
 		public function totalUser(){
-			$staff = [UserService::STAFF, UserService::SUPERVISOR];
+			$staff = [UserService::VENDOR_STAFF, UserService::CONSUMER];
 
 			$this->db->query(
 				"SELECT count(id) as total
@@ -375,5 +375,32 @@
 				$summary['gender']['female_percentage'] = ($summary['gender']['female'] / $gender_total) * 100;
 
 			return $summary;
+		}
+
+		public function toPartner($id) {
+			return parent::update([
+				'is_partner' => nowMilitary()
+			], $id);
+		}
+
+		public function removePartner($id) {
+			return parent::update([
+				'is_partner' => '0000-00-00 00:00:00'
+			], $id);
+		}
+		public function get($id, $fields = '*') {
+			$user = parent::get($id);
+
+			if(!$user) {
+				$this->addError("User does not exist");
+				return false;
+			}
+
+			if(!isEqual($user->is_partner, '0000-00-00 00:00:00')) {
+				$user->is_a_partner = true;
+			}else{
+				$user->is_a_partner = false;
+			}
+			return $user;
 		}
 	}

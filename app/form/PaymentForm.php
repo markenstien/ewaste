@@ -11,15 +11,25 @@
             $this->name = 'payment_form';
 
             $this->init([
-                'url' => _route('transaction:savePayment'),
+                'url' => _route('payment:create'),
             ]);
 
-            $this->addName();
-            $this->addMobileNumber();
-            $this->addAddress();
-            $this->addRemarks();
+            // $this->addName();
+            // $this->addMobileNumber();
+            // $this->addAddress();
+            // $this->addRemarks();
             $this->addPaymentMethod();
+            $this->addOrderId();
             $this->addAmount();
+
+            $this->customSubmit('Save Payment');
+        }
+        
+        public function addOrderId() {
+            $this->add([
+                'type' => 'hidden',
+                'name' => 'order_id'
+            ]);
         }
 
         public function addName() {

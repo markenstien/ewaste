@@ -78,18 +78,22 @@
          * override Model:get
          */
         public function get($id, $fields = '*') {
-            $productQuantitySQL = $this->_productTotalStockSQLSnippet();
-            $this->db->query(
-                "SELECT item.* , stock.total_stock as total_stock 
-                    FROM {$this->table} as item 
-                    LEFT JOIN (
-                        $productQuantitySQL
-                    ) as stock 
-                    ON stock.item_id = item.id
-                    WHERE id = '{$id}'"
-            );
+            $product = $this->all(['item.id' => $id])[0] ?? false;
 
-            return $this->db->single();
+            if(!$product)
+                return $product;
+
+            if(!isset($this->userModel)) {
+                $this->userModel = model('UserModel');
+            }
+
+            $product->owner = $this->userModel->get($product->user_id);
+
+            if($product->is_partner_verified) {
+                $product->verifier = $this->userModel->get($product->is_partner_verified);
+            }
+            
+            return $product;
         }
 
         //ovveride all parent
@@ -109,9 +113,14 @@
             }
 
             $this->db->query(
-                "SELECT item.*,ifnull(stock.total_stock,0) as total_stock FROM {$this->table} as item
+                "SELECT item.*,ifnull(stock.total_stock,0) as total_stock,
+                category.name as category_name
+                FROM {$this->table} as item
                     LEFT JOIN ({$sqlSnippet}) as stock
                     ON stock.item_id = item.id
+
+                    LEFT JOIN categories as category
+                    ON category.id = item.category_id
                     {$where} {$order_by} {$limit}"
             );
 

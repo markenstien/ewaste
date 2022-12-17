@@ -46,8 +46,64 @@
 							])?>" class="btn btn-danger btn-sm form-verify"> Delete User </a>
 						</div>
 					<?php endif?>
+
+					<?php if($user->is_a_partner) :?>
+							<div>
+								<h4>User is our partner since : <?php echo $user->is_partner?> </h4>
+								<?php echo wLinkDefault(_route('user:removePartner', $user->id), 'Remove user as partner')?>
+							</div>
+							
+						<?php else:?>
+							<?php echo wLinkDefault(_route('user:toPartner', $user->id), 'User to partner')?>
+					<?php endif?>
+
+					
 				</div>
 			</div>	
+		</div>
+
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title"></h4>
+				</div>
+
+				<div class="card-body">
+					<ul>
+						<li><a href="?view_page=products">Products On Market Place</a></li>
+						<?php if($user->is_a_partner) :?>
+						<li><a href="?view_page=verified_product">Verified Products</a></li>
+						<li><a href="?view_page=commission">Commission</a></li>
+						<?php endif?>
+					</ul>
+
+
+					<?php if(isEqual($viewPage, 'commission')) :?>
+						<h4>Commissions</h4>
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead>
+									<th>#</th>
+									<th>Source</th>
+									<th>Amount</th>
+									<th>Date</th>
+								</thead>
+
+								<tbody>
+									<?php foreach($commissions as $key => $row) :?>
+										<tr>
+											<td><?php echo ++$key?></td>
+											<td><?php echo $row->order_reference?></td>
+											<td><?php echo $row->amount?></td>
+											<td><?php echo $row->commission_date?></td>
+										</tr>
+									<?php endforeach?>
+								</tbody>
+							</table>
+						</div>
+					<?php endif?>
+				</div>
+			</div>
 		</div>
 	</div>
 

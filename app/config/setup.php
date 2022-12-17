@@ -29,6 +29,9 @@
 	define('VIEWS' , APPROOT.DS.'views');
 
 	define('SERVICES' , APPROOT.DS.'services');
+
+	define('FORMS' , APPROOT.DS.'form');
+
     ##########################################################################################
 
     /**
