@@ -359,6 +359,9 @@ load(['UserService'], SERVICES);
     }
 
 
+    function mainLogo() {
+        return GET_PATH_UPLOAD.DS.'main_logo.jpg';
+    }
     function is_user_type($userType = [UserService::ADMINISTRATOR, UserService::VENDOR_STAFF], $user = null) {
         $whoIs = whoIs();
         if(!is_null($user)) {

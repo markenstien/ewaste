@@ -6,7 +6,7 @@
                 <div class="card">
                     <div class="row">
         <div class="col-md-4 pe-md-0">
-          <img src="https://www.wptunnel.com/wp-content/uploads/2021/10/wptunnel-medical-wallpaper.jpg"
+          <img src="<?php echo mainLogo()?>"
           	style="width:100%">
         </div>
         <div class="col-md-8 ps-md-0">
