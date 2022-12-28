@@ -3,6 +3,9 @@
 use Services\UserService;
 load(['UserService'], SERVICES);
 
+    function removeVerifierValue() {
+        return '0000-00-00 00:00:00';
+    }
     function __($data)
     {
         if( is_array($data) )

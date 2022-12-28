@@ -1,5 +1,8 @@
 <?php
     use Form\PaymentForm;
+    use Omnipay\Omnipay;
+
+    require_once LIBS.DS.'payment_gateway/vendor/autoload.php';
     load(['PaymentForm'], FORMS);
 
     class PaymentController extends Controller
@@ -48,5 +51,19 @@
         public function show($id) {
             $this->data['payment'] = $this->model->get($id);
             return $this->view('payment/show', $this->data);
+        }
+
+        public function onlinePayment() {
+            $gateway = Omnipay::create('PayPal_Rest');
+            $gateway->setClientId('123123');
+            $gateway->setSecret('123123');
+            $gateway->setTestMode(true);
+
+            $response = $gateway->purchase(array(
+                'amount' => 3.00,
+                'currency' => 'PHP',
+                'returnURL' => 'return_url',
+                'cancelURL' => 'cancel_url',
+            ))->send();
         }
     }

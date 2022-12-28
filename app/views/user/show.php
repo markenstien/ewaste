@@ -46,18 +46,27 @@
 							])?>" class="btn btn-danger btn-sm form-verify"> Delete User </a>
 						</div>
 					<?php endif?>
-
-					<?php if($user->is_a_partner) :?>
+					<?php if($user->is_a_partner && is_user_type()) :?>
 							<div>
 								<h4>User is our partner since : <?php echo $user->is_partner?> </h4>
 								<?php echo wLinkDefault(_route('user:removePartner', $user->id), 'Remove user as partner')?>
 							</div>
-							
 						<?php else:?>
-							<?php echo wLinkDefault(_route('user:toPartner', $user->id), 'User to partner')?>
-					<?php endif?>
+							<?php
+								switch($user->verifier_application_status) {
+									case 'pending':
+										echo 'You have pending verifier application, waiting for admin approval';
+									break;
 
-					
+									case 'declined':
+										echo "You're application as a verifier has been declined";
+									break;
+
+									default:
+										echo wLinkDefault(_route('user:toPartner', $user->id), 'Apply as partner');
+								}
+							?>
+					<?php endif?>
 				</div>
 			</div>	
 		</div>

@@ -137,8 +137,26 @@
 		}
 
 		public function toPartner($id) {
-			$this->model->toPartner($id);
-			Flash::set("User set to partner");
+			$req = request()->get();
+			
+			if(isset($req['from']) && isEqual($req['from'],'admin')) {
+				csrfValidate();
+
+				$action = $req['action'] ?? 'accept';
+				if(isEqual($action,'accept')) {
+					Flash::set("User set to partner");
+					$this->model->toPartner($id);
+				} else {
+					Flash::set("Application as partner declined");
+					$this->model->toPartnerDecline($id);
+				}
+				return request()->return();
+				
+			}
+
+			$this->model->update([
+				'verifier_application_status' => 'pending'
+			], $id);
 			return request()->return();
 		}
 
@@ -146,5 +164,17 @@
 			$this->model->removePartner($id);
 			Flash::set("User removed as partner");
 			return request()->return();
+		}
+
+		public function verifierApplication() {
+			$this->data['users_for_approvals'] = $this->model->getAll([
+				'where' => [
+					'verifier_application_status' => [
+						'condition' => 'not null'
+					]
+				],
+				'order' => "FIELD(verifier_application_status,'pending','declined','approved')"
+			]);
+			return $this->view('user/verifiers', $this->data);
 		}
 	}

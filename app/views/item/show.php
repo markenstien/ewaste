@@ -26,20 +26,8 @@
                                     <td><?php echo empty($item->barcode) ? 'N/A' : $item->barcode?></td>
                                 </tr>
                                 <tr>
-                                    <td>Cost Price : </td>
-                                    <td><?php echo $item->cost_price?></td>
-                                </tr>
-                                <tr>
                                     <td>Sell Price : </td>
                                     <td><?php echo $item->sell_price?></td>
-                                </tr>
-                                <tr>
-                                    <td>Minimum Stock : </td>
-                                    <td><?php echo $item->min_stock?></td>
-                                </tr>
-                                <tr>
-                                    <td>Maximum Stock : </td>
-                                    <td><?php echo $item->max_stock?></td>
                                 </tr>
                                 <tr>
                                     <td>Category : </td>

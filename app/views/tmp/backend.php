@@ -119,7 +119,7 @@ License: For each use you must have a valid license purchased only from above li
                                   </div>
                                   <ul class="list-unstyled p-1">
                                     <li class="dropdown-item py-2">
-                                      <a href="<?php echo _route('user:edit' , $auth->id)?>" class="text-body ms-0">
+                                      <a href="<?php echo _route('user:show' , $auth->id)?>" class="text-body ms-0">
                                         <i class="me-2 icon-md" data-feather="user"></i>
                                         <span>Profile</span>
                                       </a>
@@ -183,6 +183,13 @@ License: For each use you must have a valid license purchased only from above li
                                 <a class="nav-link" href="<?php echo _route('user:index')?>">
                                     <i class="link-icon" data-feather="box"></i>
                                     <span class="menu-title">Users</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo _route('user:verifier-applications')?>">
+                                    <i class="link-icon" data-feather="box"></i>
+                                    <span class="menu-title">Verifier Applications</span>
                                 </a>
                             </li>
                             <?php endif?>

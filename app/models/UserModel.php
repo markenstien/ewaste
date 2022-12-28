@@ -22,7 +22,8 @@
 			'is_partner',
 			'profile',
 			'created_at',
-			'created_by'
+			'created_by',
+			'verifier_application_status'
 		];
 
 
@@ -35,6 +36,7 @@
 			'lastname',
 			'is_verified',
 			'is_partner',
+			'verifier_application_status'
 		];
 
 		public function save($user_data , $id = null)
@@ -43,15 +45,12 @@
 			$fillable_datas = $this->getFillablesOnly($user_data);
 			$validated = $this->validate($fillable_datas, $id);
 
-			if(!isset($user_data['username'])) {
-				$user_data['username'] = substr($user_data['firstname'],1) .''. substr($user_data['lastname'], 1);
-				$user_data['username'] = strtoupper($user_data['username'].random_number(4));
-			}
 			if(!is_null($id))
 			{
 				//change password also
 				if(empty($fillable_datas['password']) )
 					unset($fillable_datas['password']);
+					
 				$res = parent::update($fillable_datas , $id);
 				if(isset($user_data['profile'])){
 					$this->uploadProfile('profile' , $id);
@@ -59,6 +58,11 @@
 				$user_id = $id;
 				$this->addMessage(self::MESSAGE_UPDATE_SUCCESS);
 			} else {
+				if(!isset($user_data['username'])) {
+					$fillable_datas['username'] = substr($user_data['firstname'],1) .''. substr($user_data['lastname'], 1);
+					$fillable_datas['username'] = strtoupper($user_data['username'].random_number(4));
+				}
+
 				$user_id = parent::store($fillable_datas);
 				$this->addMessage(self::MESSAGE_CREATE_SUCCESS);
 			}
@@ -192,7 +196,10 @@
 				$this->addError("Unable to update user");
 				return false;
 			}
-			$this->addMessage("User {$user_data['first_name']} has been updated!");
+
+			if(isset($user_data['first_name'])) {
+				$this->addMessage("User {$user_data['first_name']} has been updated!");
+			}
 
 			return true;
 		}
@@ -379,13 +386,21 @@
 
 		public function toPartner($id) {
 			return parent::update([
-				'is_partner' => nowMilitary()
+				'is_partner' => nowMilitary(),
+				'verifier_application_status' => 'approved'
+			], $id);
+		}
+
+		public function toPartnerDecline($id) {
+			return parent::update([
+				'is_partner' => removeVerifierValue(),
+				'verifier_application_status' => 'declined'
 			], $id);
 		}
 
 		public function removePartner($id) {
 			return parent::update([
-				'is_partner' => '0000-00-00 00:00:00'
+				'is_partner' => removeVerifierValue()
 			], $id);
 		}
 		public function get($id, $fields = '*') {

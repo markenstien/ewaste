@@ -100,8 +100,13 @@
 	}
 
 	function csrfGet(){
-		return Session::get('csrfToken');
+		$csrf = Session::get('csrfToken');
+		if(empty($csrf)) 
+			$csrf = csrfReload();
+
+		return $csrf;
 	}
+
 	function csrfReload(){
 		return Session::set('csrfToken' , get_token_random_char(20));
 	}

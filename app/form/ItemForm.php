@@ -16,11 +16,11 @@
             
             $this->addName();
             $this->addSku();
-            $this->addBarcode();
-            $this->addCostPrice();
+            // $this->addBarcode();
+            // $this->addCostPrice();
             $this->addSellPrice();
-            $this->addMinStock();
-            $this->addMaxStock();
+            // $this->addMinStock();
+            // $this->addMaxStock();
             $this->addCategory();
             $this->addVariant();
             $this->addRemarks();
@@ -36,7 +36,10 @@
                 'options' => [
                     'label' => 'Item Name'
                 ],
-                'class' => 'form-control'
+                'class' => 'form-control',
+                'attributes' => [
+                    'autocomplete' => 'off'
+                ]
             ]);
         }
 
@@ -48,7 +51,10 @@
                 'options' => [
                     'label' => 'SKU'
                 ],
-                'class' => 'form-control'
+                'class' => 'form-control',
+                'attributes' => [
+                    'autocomplete' => 'off'
+                ]
             ]);
         }
 
@@ -83,7 +89,10 @@
                 'options' => [
                     'label' => 'Sell Price'
                 ],
-                'class' => 'form-control'
+                'class' => 'form-control',
+                'attributes' => [
+                    'autocomplete' => 'off'
+                ]
             ]);
         }
 
@@ -136,7 +145,11 @@
                 'options' => [
                     'label' => 'Variant'
                 ],
-                'class' => 'form-control'
+                'class' => 'form-control',
+                'attributes' => [
+                    'autocomplete' => 'off',
+                    'placeholder' => 'Example: Tablet, 2001 , grey'
+                ]
             ]);
         }
 
@@ -148,7 +161,11 @@
                     'label' => 'Remarks',
                     'rows' => 3
                 ],
-                'class' => 'form-control'
+                'class' => 'form-control',
+                'attributes' => [
+                    'autocomplete' => 'off',
+                    'placeholder' => 'Example : Slightly used, complete package with charge, issue : dents in LCD'
+                ]
             ]);
         }
     }

@@ -21,8 +21,10 @@
 		'sendCredential' => $controller.'/sendCredential',
 		'toPartner' => $controller.'/toPartner',
 		'removePartner' => $controller.'/removePartner',
+		'verifier-applications' => $controller .'/verifierApplication'
 	];
 
+	
 	$controller = '/StockController';
 	$routes['stock'] = [
 		'index' => $controller.'/index',
@@ -124,7 +126,11 @@
 		'order' => $controller.'/orderReceipt',
 		'create' => $controller.'/create',
 		'delete' => $controller.'/destroy',
-		'show'   => $controller.'/show'
+		'show'   => $controller.'/show',
+		'releases' => $controller. '/releases',
+		'available-commissions' => $controller. '/availableCommissions',
+		'release' => $controller .'/release',
+		'request' => $controller .'/requests'
 	];
 	
 
