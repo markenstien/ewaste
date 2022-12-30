@@ -168,6 +168,10 @@
 			if($createUser) {
 				//send confirmation link
 				$this->sendRegistrationConfirmation($user_data['email']);
+
+				return $createUser;
+			} else {
+				return false;
 			}
 		}
 
@@ -198,7 +202,7 @@
 						{$anchor}
 					</div>
 				EOF;
-				
+
 				_mail($user->email, 'User Credential' , $body);
 			return true;
 		}

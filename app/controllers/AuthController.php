@@ -23,7 +23,15 @@
 
 			if(isSubmitted()) {
 				$post = request()->posts();
-				$this->user->register($post);
+				$isOkay = $this->user->register($post);
+
+				if($isOkay) {
+					Flash::set($this->user->getMessageString());
+					return redirect(_route('auth:login'));
+				} else {
+					Flash::set($this->user->getErrorString(), 'danger');
+					return request()->return();
+				}
 			}
 
 			$this->_form->init([
