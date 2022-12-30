@@ -45,6 +45,9 @@
 			$fillable_datas = $this->getFillablesOnly($user_data);
 			$validated = $this->validate($fillable_datas, $id);
 
+			if(!$validated)
+				return false;
+
 			if(!is_null($id))
 			{
 				//change password also
@@ -60,7 +63,7 @@
 			} else {
 				if(!isset($user_data['username'])) {
 					$fillable_datas['username'] = substr($user_data['firstname'],1) .''. substr($user_data['lastname'], 1);
-					$fillable_datas['username'] = strtoupper($user_data['username'].random_number(4));
+					$fillable_datas['username'] = strtoupper($fillable_datas['username'].random_number(4));
 				}
 
 				$user_id = parent::store($fillable_datas);
@@ -73,7 +76,7 @@
 
 		public function sendCredential($id)
 		{
-			$user = $this->model->get($id);
+			$user = parent::get($id);
 
 			$app_name = COMPANY_NAME;
 
@@ -84,7 +87,7 @@
 			 * send auth to email*/
 			$body = <<<EOF
 				<div>
-					Hi {$user->first_name} , Your Credentials
+					Hi {$user->firstname} , Your Credentials
 					for the {$app_name} Portal <br/>
 					<strong>username/email : {$user->email}  </strong> <br/>
 					<strong>password : {$user->password}  </strong>
@@ -111,7 +114,7 @@
 
 		private function validate($user_data , $id = null)
 		{
-			if(isset($user_data['email']))
+			if(!empty($user_data['email']))
 			{
 				$is_exist = $this->getByKey('email' , $user_data['email'])[0] ?? '';        	
 
@@ -121,17 +124,17 @@
 				}
 			}
 
-			if(isset($user_data['username']))
-			{
-				$is_exist = $this->getByKey('username' , $user_data['username'])[0] ?? '';
+			// if(!empty($user_data['username']))
+			// {
+			// 	$is_exist = $this->getByKey('username' , $user_data['username'])[0] ?? '';
 
-				if( $is_exist && !isEqual($is_exist->id , $id) ){
-					$this->addError("Username {$user_data['username']} already used");
-					return false;
-				}
-			}
+			// 	if( $is_exist && !isEqual($is_exist->id , $id) ){
+			// 		$this->addError("Username {$user_data['username']} already used");
+			// 		return false;
+			// 	}
+			// }
 
-			if(isset($user_data['phone_number']))
+			if(!empty($user_data['phone_number']))
 			{
 				$is_exist = $this->getByKey('phone_number' , $user_data['phone_number'])[0] ?? '';
 
@@ -154,10 +157,51 @@
 			if(!empty($profile) )
 				$this->uploadProfile($profile , $res);
 
-			$this->addMessage("User {$user_data['first_name']} Created");
+			$this->addMessage("User {$user_data['firstname']} Created");
 			return $res;
 		}
 
+		public function register($user_data, $profile = '') {
+			$user_data['is_verified'] = false;
+			$createUser = $this->create($user_data , $profile);
+
+			if($createUser) {
+				//send confirmation link
+				$this->sendRegistrationConfirmation($user_data['email']);
+			}
+		}
+
+		public function sendRegistrationConfirmation($email) {
+			$user = parent::single([
+				'email' => $email
+			]);
+
+			if(!$user)
+				return false;
+
+			$app_name = COMPANY_NAME;
+				$login_href = URL.DS._route('user:verify-registration', null, [
+					'payload' => seal([
+						'userId' => $user->id,
+						'dateOfValidity' => nowMilitary()
+					])
+				]);
+				$anchor = "<a href='{$login_href}'>Confirm my registration</a>";
+				/**
+				 * send auth to email*/
+				$body = <<<EOF
+					<div>
+						Hi {$user->id} , Thank you for your registration.
+						To start selling and buying to {$app_name}
+						Click the link below, to verify your account. 
+						<div>Important: If you have not created this account, please ignore the link.</div>
+						{$anchor}
+					</div>
+				EOF;
+				
+				_mail($user->email, 'User Credential' , $body);
+			return true;
+		}
 		public function uploadProfile($file_name , $id)
 		{
 			$is_empty = upload_empty($file_name);
@@ -173,14 +217,14 @@
 				$this->addError(implode(',' , $upload['result']['err']));
 				return false;
 			}
-
-			//save to profile
-
 			$res = parent::update([
 				'profile' => GET_PATH_UPLOAD.DS.$upload['result']['name']
 			] , $id);
 
 			if($res) {
+				if(isEqual(whoIs('id'), $id)) {
+					$this->startAuth($id);					
+				}
 				$this->addMessage("Profile uploaded!");
 				return true;
 			}
@@ -191,17 +235,34 @@
 		public function update($user_data , $id)
 		{
 			$res = $this->save($user_data , $id);
-
 			if(!$res) {
 				$this->addError("Unable to update user");
 				return false;
 			}
-
 			if(isset($user_data['first_name'])) {
 				$this->addMessage("User {$user_data['first_name']} has been updated!");
 			}
-
 			return true;
+		}
+
+		public function verifyUser($userId) {
+			$user = parent::get($userId);
+
+			if($user->is_verified) {
+				$this->addError("User is already verified");
+				return false;
+			} else {
+				parent::update([
+					'is_verified' => true
+				], $userId);
+
+				if(isEqual(whoIs('id'), $userId)) {
+					$this->startAuth($userId);
+				} 
+
+				$this->addMessage("User Verified");
+				return true;
+			}
 		}
 
 		public function getByKey($column , $key , $order = null)
@@ -226,6 +287,11 @@
 				$where = $this->conditionConvert($params['where']);
 
 			return parent::all($where, $params['fields'] ?? '*', $order);
+		}
+
+
+		public function initState($userId) {
+
 		}
 
 		public function generateCode($user_type)
@@ -289,7 +355,7 @@
 
 			$auth = null;
 
-			while( is_null($auth) )
+			while(is_null($auth))
 			{
 				Session::set('auth' , $user);
 				$auth = Session::get('auth');

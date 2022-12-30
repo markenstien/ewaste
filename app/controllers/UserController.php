@@ -177,4 +177,53 @@
 			]);
 			return $this->view('user/verifiers', $this->data);
 		}
+
+		public function verifyRegistration() {
+			$req = request()->get();
+
+			if(!isset($req['payload'])) {
+				Flash::set("Unknown request, Welcome to " . COMPANY_NAME);
+				return redirect(_route('auth:login'));
+			}
+			$payload = unseal($req['payload']);
+
+			$difference = timeInMinutesToHours(timeDifference($payload['dateOfValidity'], timeNow()));
+
+			if($difference >= 1) {
+				Flash::set("Registration confirmation expired, you can re-request new confirmation link, use your email", 'danger');
+				return redirect(_route('user:resend-verify-registration'));
+			} else {
+				$isOkay = $this->model->verifyUser($payload['userId']);
+
+				if($isOkay) {
+					Flash::set($this->model->getMessageString());
+					if(isEqual(whoIs('id'), $payload['userId'])) {
+						return redirect(_route('dashboard:index'));
+					} else {
+						Flash::set("Something went wrong");
+						return redirect(_route('dasboard:idnex'));
+					}
+				} else {
+					Flash::set($this->model->getErrorString(), 'danger');
+					return redirect(_route('auth:login'));
+				}
+			}
+		}
+
+		/**
+		 * use email
+		 */
+		public function resendVerifyRegistration() {
+			if(isSubmitted()) {
+				$post = request()->posts();
+				$this->model->sendRegistrationConfirmation($post['email']);
+				Flash::set("Confirmation has been re sent, You can close this page now");
+			}
+			$this->data['user_form']->init([
+				'url' => _route('user:resend-verify-registration')
+			]);
+			$this->data['user_form']->setValue('submit', 'Resend Confirmation');
+			$this->data['form'] = $this->data['user_form'];
+			return $this->view('user/verify_registration', $this->data);
+		}
 	}

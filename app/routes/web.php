@@ -21,7 +21,9 @@
 		'sendCredential' => $controller.'/sendCredential',
 		'toPartner' => $controller.'/toPartner',
 		'removePartner' => $controller.'/removePartner',
-		'verifier-applications' => $controller .'/verifierApplication'
+		'verifier-applications' => $controller .'/verifierApplication',
+		'verify-registration' => $controller .'/verifyRegistration',
+		'resend-verify-registration' => $controller.'/resendVerifyRegistration'
 	];
 
 	
@@ -116,7 +118,8 @@
 		'order' => $controller.'/orderReceipt',
 		'create' => $controller.'/create',
 		'delete' => $controller.'/destroy',
-		'show'   => $controller.'/show'
+		'show'   => $controller.'/show',
+		'bank-payment' => $controller .'/bankPayment'
 	];
 
 

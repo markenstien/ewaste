@@ -1,7 +1,9 @@
 <?php 
 	
 	load(['UserForm'] , APPROOT.DS.'form');
- 	use Form\UserForm;
+	load(['UserService'] , SERVICES);
+	use Form\UserForm;
+	use Services\UserService;
 
 	class AuthController extends Controller
 	{	
@@ -17,6 +19,25 @@
 			return $this->login();
 		}
 
+		public function register() {
+
+			if(isSubmitted()) {
+				$post = request()->posts();
+				$this->user->register($post);
+			}
+
+			$this->_form->init([
+				'url' => _route('auth:register')
+			]);
+			$this->_form->remove('user_type');
+			$this->_form->add([
+				'name' => 'user_type',
+				'type' => 'hidden',
+				'value' => UserService::CONSUMER
+			]);
+			$this->data['form'] = $this->_form;
+			return $this->view('auth/register', $this->data);
+		}
 		public function login()
 		{
 			if(isSubmitted())

@@ -29,7 +29,10 @@
               <div>
                 <?php __($form->get('submit')) ?>
               </div>
-              <!-- <a href="<?php echo _route('auth:register')?>" class="d-block mt-3 text-muted">Not a user? Sign up</a> -->
+              <div class="row">
+                <div class="col"><a href="<?php echo _route('auth:register')?>" class="d-block mt-3 text-muted">Not a user? Sign up</a></div>
+                <div class="col"><a href="<?php echo _route('user:resend-verify-registration')?>" class="d-block mt-3 text-muted">Not a user? Sign up</a></div>
+              </div>
             <?php __( $form->end() )?>
           </div>
         </div>

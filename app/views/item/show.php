@@ -2,11 +2,11 @@
     <div class="card">
         <div class="card-header">
             <h4 class="card-title">Item Preview</h4>
-            <?php Flash::show()?>
-            <?php echo btnEdit(_route('item:edit', $item->id))?>
+            <?php echo wLinkDefault(_route('item:edit', $item->id), 'Edit Item')?>
         </div>
 
         <div class="card-body">
+            <?php Flash::show()?>
             <div class="row">
                 <div class="col-md-6">
                     <section>

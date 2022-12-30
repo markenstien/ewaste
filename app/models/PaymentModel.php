@@ -21,6 +21,7 @@
                 return parent::update($_fillables, $id);
             } else {
                 $_fillables['reference'] = $this->generateRefence();
+                $this->retVal['response']['reference'] = $_fillables['reference'];
                 return parent::store($_fillables);
             }
         }
@@ -86,7 +87,18 @@
         }
 
         public function getOrderPayment($id) {
-            return parent::single(['order_id'=>$id]);
+            $payment = parent::single(['order_id'=>$id]);
+            if($payment){
+                if(!isset($this->attachmentModel)) {
+                    $this->attachmentModel = model('AttachmentModel');
+                }
+                $payment->attachment = $this->attachmentModel->single([
+                    'global_id' => $payment->id,
+                    'global_key' => 'PAYMENT_ATTACHMENT'
+                ]);
+            }
+
+            return $payment;
         }
 
         public function generateRefence() {

@@ -2,10 +2,14 @@
     <div class="col-md-8 col-sm-12 mx-auto">
         <div class="card">
             <div class="card-body">
+                <?php Flash::show()?>
                 <?php 
                     Form::open([
                         'method' => 'post',
-                        'action' => ''
+                        'action' => '',
+                        'id' => 'purchaseForm',
+                        'name' => 'purchaseForm',
+                        'enctype' => 'multipart/form-data'
                     ]);
 
                     Form::hidden('item_id', $item->id);
@@ -57,8 +61,43 @@
                         </div>
                     </div>
                 </section>
+
                 <?php echo wDivider('40')?>
-                
+
+                <section id="payment_method_section">
+                    <h4>Select Payment Method</h4>
+                    <div class="border-box">
+                        <label for="cod">
+                            <input type="radio" name="payment_method" id="cod" value="cod" checked>
+                            Cash On Delivery
+                        </label>
+                    </div>
+
+                    <div class="border-box">
+                        <label for="bank">
+                            <input type="radio" name="payment_method" id="bank" value="bank">
+                            Bank/Paypal
+                        </label>
+                    </div>
+
+                    <div class="border-box">
+                        <label for="wallet">
+                            <input type="radio" name="payment_method" id="wallet" value="wallet">
+                            E-Wallet
+                            (GCASH, PAYMAYA)
+                        </label>
+
+                        <div id="wallet_proof">
+                            <?php echo wDivider('12')?>
+                            <h4>Proof Of Payment</h4>
+                            <?php Form::file('proof_of_payment')?>
+                        </div>
+                    </div>
+                </section>
+                <?php Form::close();?>
+            </div>
+
+            <div class="card-footer">
                 <section class="row">
                     <div class="col-6">
                         Sub Total <h4>PHP : <span id="subTotal"><?php echo $item->sell_price * 1?></span></h4>
@@ -66,14 +105,13 @@
                     <div class="col-6">
                         <?php
                             if($item->total_stock > 0) {
-                                Form::submit('', 'Place Order', ['class' => 'btn btn-primary form-verify mt-2']);
+                                Form::submit('', 'Place Order', ['class' => 'btn btn-primary form-verify mt-2', 'form' => 'purchaseForm']);
                             }else{
                                 echo "<h2>OUT OF STOCKS</h2>";
                             }
                         ?>
                     </div>
                 </section>
-                <?php Form::close();?>
             </div>
         </div>
     </div>
@@ -95,6 +133,18 @@
                 }
                 $("#subTotal").html(quantityValue * itemAmount)
             });
+
+            $("#payment_method_section").on('click', function(e) {
+                let target = $(e.target);
+                
+                if(target.is('input[type="radio"]')) {
+                    if(target.val() == 'wallet') {
+                        $("#wallet_proof").show();
+                    }else{
+                        $("#wallet_proof").hide();
+                    }
+                }
+            });
         });
     </script>
 <?php endbuild()?>
@@ -108,6 +158,10 @@
         #cart-quanity-controller button,
         #cart-quanity-controller #quantity{
             border: 1px solid #eee;
+        }
+
+        #wallet_proof{
+            display: none;
         }
     </style>
 <?php endbuild()?>

@@ -169,3 +169,42 @@
             <div style="margin-top:{$size}px"> </div>
         EOF;
     }
+
+    /**
+     * mobile designs
+     */
+
+     /**
+      * image, title, description, 
+      */
+     function wTileDefault($params = []) {
+        $image = $params['image'] ?? '';
+        $title = $params['title'] ?? '';
+        $description = $params['description'] ?? '';
+
+        if(!empty($image)) {
+            $image = <<<EOF
+                <img src="{$image}" class="wd-100 wd-sm-150 me-3" alt="...">
+            EOF;
+        }
+        $html = <<<EOF
+        <ul class="list-unstyled">
+            <li class="d-flex align-items-start">
+                {$image}
+                <div>
+                    <h5 class="mt-0 mb-1">{$title}</h5>
+                    {$description}
+                </div>
+            </li>
+        </ul>
+        EOF;
+        
+        if(isset($params['href'])) {
+            $retVal = <<<EOF
+                <a href='{$params['href']}' style='color:#000;'>{$html}</a>
+            EOF;
+
+            return $retVal;
+        }
+        return $html;
+    }

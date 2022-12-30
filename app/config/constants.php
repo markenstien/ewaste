@@ -7,14 +7,20 @@
     define('DEFAULT_REPLY_TO' , '');
 
     const MAILER_AUTH = [
-        'username' => '#',
-        'password' => '#',
-        'host'     => '#',
-        'name'     => '#',
-        'replyTo'  => '#',
-        'replyToName' => '#'
+        'username' => 'main@e-waste.shop',
+        'password' => '2.hd@AlJV7w;',
+        'host'     => 'e-waste.shop',
+        'name'     => 'E-WASTE',
+        'replyTo'  => 'no-reply',
+        'replyToName' => 'no-reply'
     ];
 
+    const THIRD_PARTY = [
+        'paypal' => [
+            'clientID' => 'AeTxGYye5QLyXZokGiE4hhND5GEeu3dxePRXiqa921Sv0z3fz3dWdOCfjF9ChHOd0ldZLq45zxp8f4B4',
+            'secret' => 'EIVtrmYqTH-lX927ZuLCuX8IVVjQtqWA5YCMxxhaaTXVco9JkWwi0zuydpu5K2-9rCH-7yipPUtiZDhY'
+        ]
+    ];
 
 
     const ITEXMO = [

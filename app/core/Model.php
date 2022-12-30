@@ -8,6 +8,7 @@
 
 		private $_error = [];
 		private static $instance = null;
+		public $retVal = [];
 
 		const  MESSAGE_UPDATE_SUCCESS = "UPDATED SUCCESFULLY";
 		const  MESSAGE_CREATE_SUCCESS = "CREATED SUCCESFULLY";

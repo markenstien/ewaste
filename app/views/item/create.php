@@ -3,7 +3,7 @@
     <div class="card">
         <div class="card-header">
             <h4 class="card-title">Item</h4>
-            <?php echo btnList(_route('item:index'))?>
+            <?php echo wLinkDefault(_route('item:index'),'Products')?>
         </div>
 
         <div class="card-body">

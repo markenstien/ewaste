@@ -1,7 +1,9 @@
 <?php
 
     use Services\OrderService;
-    load(['OrderService'], SERVICES);
+    use Services\PaymentBankService;
+
+    load(['OrderService','PaymentBankService'], SERVICES);
 
     class OrderController extends Controller
     {
@@ -55,12 +57,91 @@
                 $post = request()->posts();
                 $orderId = $this->model->singleOrder($post);
 
-                if($orderId) {
-                    Flash::set("Order confirmed");
-                    return redirect(_route('order:show', $orderId));
-                } else {
+                if(!$orderId) {
                     Flash::set("Something went wrong");
                     return request()->return();
+                }
+
+                $orderResponse = $this->model->retVal['orderResponse'];
+                switch($post['payment_method']) {
+                    case 'wallet':
+                        $message = '';
+                        if(upload_empty('proof_of_payment')) {
+                            Flash::set("Wallet payment requires proof of payment", 'danger');
+                            return request()->return();
+                        }
+
+                        $this->paymentModel = model('PaymentModel');  
+
+                        $paymentID = $this->paymentModel->createOrUpdate([
+                            'order_id' => $orderId,
+                            'amount'   => $orderResponse['amount'],
+                            'payment_method' => 'Online',
+                        ]);
+
+                        if(!$paymentID) {
+                            Flash::set("Invalid Payment");
+                            return request()->return();
+                        }
+
+                        $isUploadOk = $this->_attachmentModel->upload([
+                            'display_name' => "Payment Attachment For : {$this->paymentModel->retVal['response']['reference']}",
+                            'search_key' => 'PAYMENT_ATTACHMENT',
+                            'global_key' => 'PAYMENT_ATTACHMENT',
+                            'global_id' => $paymentID
+                        ], 'proof_of_payment');
+
+                        if($paymentID) {
+                            $message .= "Payment succesfully placed";
+                        }
+
+                        if($isUploadOk) {
+                            $message .= "Payment proof attached succesfully";
+                        }
+                        Flash::set($message);
+
+                        return redirect(_route('order:show', $orderId));
+                    break;
+
+                    case 'bank':
+                        /**
+                         * bank payment
+                         */
+                        $paymentService = PaymentBankService::getInstance();
+                        $returnURL = URL.'/'._route('payment:bank-payment', null, [
+                            'platform' => 'paypal',
+                            'orderID' => seal($orderId),
+                            'response' => 'Success'
+                        ]);
+                        $cancelURL = URL.'/'._route('payment:bank-payment', null, [
+                            'platform' => 'paypal',
+                            'response' => 'Cancel',
+                            'orderID' => seal($orderId),
+                        ]);
+
+                        $purchase = $paymentService->purchase([
+                            'amount' => $orderResponse['amount'],
+                            'currency' => 'PHP',
+                            'returnURL' => $returnURL,
+                            'cancelURL' => $cancelURL
+                        ])->send();
+                            
+                        if ($purchase->isRedirect()) {
+                            // redirect to offsite payment gateway
+                            $purchase->redirect();
+                        } elseif ($purchase->isSuccessful()) {
+                            // payment was successful: update database
+                            print_r($purchase);
+                        } else {
+                            // payment failed: display message to customer
+                            echo $purchase->getMessage();
+                        }
+                    break;
+
+                    case 'cod':
+                        Flash::set("Order confirmed");
+                        return redirect(_route('order:show', $orderId));
+                        break;
                 }
             }
 

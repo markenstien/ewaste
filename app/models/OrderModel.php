@@ -400,13 +400,12 @@ use Services\OrderService;
             //if verifier exist
             if(!is_null($verifier)) {
                 //add commission
-                if(!isset($this->commissionModel)) {
+                if (!isset($this->commissionModel)) {
                     $this->commissionModel = model('CommissionModel');
                 }
 
                 $comission = OrderService::verifierCommission($totalAmount);
                 $comissionAmount = $comission['commissionAmount'];
-
                 $comission = $this->commissionModel->createOrUpdate([
                     'user_id' => $verifier->id,
                     'amount'  => $comissionAmount,
@@ -417,6 +416,14 @@ use Services\OrderService;
 
             if($orderId) {
                 $this->addMessage("Order: #{$reference} success");
+
+                $this->retVal['orderResponse'] = [
+                    'id' => $orderId,
+                    'amount' => $totalAmount,
+                    'reference' => $reference,
+                    'seller_id' => $seller->id,
+                    'customer_id' => $buyer->id,
+                ];
                 return $orderId;
             } else {
                 $this->addError("Order failed");

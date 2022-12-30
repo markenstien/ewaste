@@ -80,6 +80,13 @@
                         }
                     ?>
                 </p>
+
+                <?php if($payment->attachment):?>
+                    <div class="col-md-5">
+                        <h5>Proof Of Payment</h5>
+                        <img src="<?php echo $payment->attachment->full_url?>" alt="">
+                    </div>
+                <?php endif?>
                 <?php if($payment->is_removed) :?>
                     <h5 class="text-danger">Payment Removed</h5>
                 <?php endif?>

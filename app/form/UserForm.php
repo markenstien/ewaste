@@ -20,14 +20,16 @@
 			/*personal details*/
 			$this->addFirstName();
 			$this->addLastName();
-			$this->addGender();
-			/*end*/
-			$this->addPhoneNumber();
 			$this->addEmail();
+			$this->addPassword();
 			$this->addAddress();
 
-			$this->addUsername();
-			$this->addPassword();
+
+			/*end*/
+			$this->addPhoneNumber();
+			$this->addGender();
+
+			// $this->addUsername();
 			$this->addUserType();
 			$this->addProfile();
 			
@@ -111,7 +113,8 @@
 				'attributes' => [
 					'id' => 'address',
 					'rows' => 3
-				]
+				],
+				'required' => true
 			]);
 		}
 
@@ -145,7 +148,8 @@
 				'attributes' => [
 					'id' => 'email',
 					'placeholder' => 'Enter Valid Email'
-				]
+				],
+				'required' => true
 			]);
 		}
 

@@ -3,7 +3,8 @@
     <div class="card">
         <div class="card-header">
             <h4 class="card-title">Item</h4>
-            <?php echo btnList(_route('item:index'))?>
+            <?php echo wLinkDefault(_route('item:show', $item->id), 'Back To Prev')?> | 
+            <?php echo wLinkDefault(_route('item:index'), 'Items')?>
             <?php Flash::show()?>
         </div>
 
