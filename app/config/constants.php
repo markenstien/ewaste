@@ -10,9 +10,9 @@
         'username' => 'main@e-waste.shop',
         'password' => '2.hd@AlJV7w;',
         'host'     => 'e-waste.shop',
-        'name'     => 'E-WASTE',
-        'replyTo'  => 'no-reply',
-        'replyToName' => 'no-reply'
+        'name'     => 'e-waste',
+        'replyTo'  => 'main@e-waste.shop',
+        'replyToName' => 'main@e-waste.shop'
     ];
 
     const THIRD_PARTY = [
