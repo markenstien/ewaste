@@ -29,7 +29,7 @@
 		{
 			$this->phpmailer->isSMTP();
 			$this->phpmailer->Host       =  MAILER_AUTH['host'];
-			$this->phpmailer->Port       =  587;
+			$this->phpmailer->Port       =  MAILER_AUTH['port'];
 			$this->phpmailer->SMTPAuth   =  true;
 			$this->phpmailer->SMTPSecure = 'tls';
 			$this->phpmailer->Username   =  MAILER_AUTH['username'];

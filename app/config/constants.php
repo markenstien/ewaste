@@ -12,7 +12,8 @@
         'host'     => 'e-waste.shop',
         'name'     => 'e-waste',
         'replyTo'  => 'main@e-waste.shop',
-        'replyToName' => 'main@e-waste.shop'
+        'replyToName' => 'main@e-waste.shop',
+        'port' => '465'
     ];
 
     const THIRD_PARTY = [
