@@ -7,6 +7,7 @@
             parent::__construct();
             $this->userModel = model('UserModel');
         }
+        
         public function post() {
             if(parent::isPost()) {
                 $post = $this->inputs;
