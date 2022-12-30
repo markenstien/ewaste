@@ -55,6 +55,12 @@
                 }
             }
 
+            $this->data['item_form']->add([
+                'name' => 'user_id',
+                'type' => 'hidden',
+                'value' => whoIs('id')
+            ]);
+
             $this->data['item_form']->init([
                 'action' => _route('item:create')
             ]);
@@ -64,6 +70,7 @@
 
         public function show($id) {
             $this->data['item'] = $this->model->get($id);
+
             $this->data['images'] = $this->model->getImages($id);
             $this->data['attachmentForm'] = $this->attachmentForm($id);
             $this->data['stocks'] = $this->stockModel->getProductLogs($id,[
@@ -100,6 +107,14 @@
 
             $itemForm->setValueObject($item);
             $itemForm->addId($id);
+
+            if(!$item->user_id) {
+                $itemForm->add([
+                    'name' => 'user_id',
+                    'value' => whoIs('id'),
+                    'type' => 'hidden'
+                ]);
+            }
             $this->data['item'] = $item;
             $this->data['item_form'] = $itemForm;
 

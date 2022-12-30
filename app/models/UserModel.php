@@ -80,7 +80,7 @@
 
 			$app_name = COMPANY_NAME;
 
-			$login_href = URL.DS._route('auth:login');
+			$login_href = URL.'/'._route('auth:login');
 
 			$anchor = "<a href='{$login_href}'>Login here.</a>";
 			/**
@@ -183,26 +183,26 @@
 				return false;
 
 			$app_name = COMPANY_NAME;
-				$login_href = URL.DS._route('user:verify-registration', null, [
-					'payload' => seal([
-						'userId' => $user->id,
-						'dateOfValidity' => nowMilitary()
-					])
-				]);
-				$anchor = "<a href='{$login_href}'>Confirm my registration</a>";
-				/**
-				 * send auth to email*/
-				$body = <<<EOF
-					<div>
-						Hi {$user->id} , Thank you for your registration.
-						To start selling and buying to {$app_name}
-						Click the link below, to verify your account. 
-						<div>Important: If you have not created this account, please ignore the link.</div>
-						{$anchor}
-					</div>
-				EOF;
+			$login_href = URL.'/'._route('user:verify-registration', null, [
+				'payload' => seal([
+					'userId' => $user->id,
+					'dateOfValidity' => nowMilitary()
+				])
+			]);
+			$anchor = "<a href='{$login_href}'>{$login_href}</a>";
+			/**
+			 * send auth to email*/
+			$body = <<<EOF
+				<div>
+					Hi {$user->id} , Thank you for your registration.
+					To start selling and buying to {$app_name}
+					Click the link below, to verify your account. 
+					<div>Important: If you have not created this account, please ignore the link.</div>
+					{$anchor}
+				</div>
+			EOF;
 
-				_mail($user->email, 'User Credential' , $body);
+			_mail($user->email, 'User Credential' , $body);
 			return true;
 		}
 		public function uploadProfile($file_name , $id)

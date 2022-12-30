@@ -36,7 +36,6 @@
                         return false;
                     }
                 }
-                
                 $retVal = parent::update($_fillables, $id);
             } else {
                 if(isset($item) && $item) {
@@ -114,13 +113,21 @@
 
             $this->db->query(
                 "SELECT item.*,ifnull(stock.total_stock,0) as total_stock,
-                category.name as category_name
+                category.name as category_name,
+                concat(seller.firstname , ' ',seller.lastname) as seller_name,
+                concat(verifier.firstname, ' ',verifier.lastname) as verifier_name
                 FROM {$this->table} as item
                     LEFT JOIN ({$sqlSnippet}) as stock
                     ON stock.item_id = item.id
 
                     LEFT JOIN categories as category
                     ON category.id = item.category_id
+
+                    LEFT JOIN users as seller 
+                    ON seller.id = item.user_id
+
+                    LEFT JOIN users as verifier 
+                    ON seller.id = item.is_partner_verified
                     {$where} {$order_by} {$limit}"
             );
 

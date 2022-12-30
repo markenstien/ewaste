@@ -12,6 +12,7 @@
                         <th>#</th>
                         <th>SKU</th>
                         <th>Name</th>
+                        <th>Seller</th>
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Action</th>
@@ -23,6 +24,7 @@
                                 <td><?php echo ++$key?></td>
                                 <td><?php echo $row->sku?></td>
                                 <td><?php echo $row->name?></td>
+                                <td><?php echo $row->seller_name?></td>
                                 <td><?php echo amountHTML($row->sell_price)?></td>
                                 <td><?php echo $row->total_stock?></td>
                                 <td>

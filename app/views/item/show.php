@@ -29,6 +29,17 @@
                                     <td>Sell Price : </td>
                                     <td><?php echo $item->sell_price?></td>
                                 </tr>
+
+                                <tr>
+                                    <td>Seller Name & Verifier: </td>
+                                    <td>
+                                        <ul class="list-unstyled">
+                                            <li>Seller  : <?php echo $item->seller_name?></li>
+                                            <li>Verfier  : <?php echo $item->verifier_name?></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                
                                 <tr>
                                     <td>Category : </td>
                                     <td><?php echo $item->category_id?></td>
