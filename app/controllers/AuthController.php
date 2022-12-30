@@ -16,6 +16,9 @@
 
 		public function index()
 		{
+			if(whoIs()) {
+				return redirect(_route('dashboard:index'));
+			}
 			return $this->login();
 		}
 

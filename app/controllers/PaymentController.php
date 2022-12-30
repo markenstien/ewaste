@@ -69,7 +69,7 @@
 
                 if($response->isSuccessful()) {
                     $responseData = $response->getData();
-                    dd($responseData);
+                    Flash::set("Payment Succesfful");
                 }
             }
         }
@@ -97,13 +97,6 @@
                                 $orderId = unseal($req['orderID']);
                                 $order = $this->orderModel->get($orderId);
                                 
-                                dd([
-                                    'order_id' => unseal($req['orderID']),
-                                    'payment_method' => $req['ONLINE'],
-                                    'amount' => $order->net_amount,
-                                    'organization' => $req['platform'],
-                                    'external_reference' => $responseData->id
-                                ]);
                                 $response = $this->model->createOrUpdate([
                                     'order_id' => unseal($req['orderID']),
                                     'payment_method' => $req['ONLINE'],
