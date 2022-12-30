@@ -218,6 +218,7 @@
 				$post = request()->posts();
 				$this->model->sendRegistrationConfirmation($post['email']);
 				Flash::set("Confirmation has been re sent, You can close this page now");
+				return redirect(_route('user:resend-verify-registration'));
 			}
 			$this->data['user_form']->init([
 				'url' => _route('user:resend-verify-registration')

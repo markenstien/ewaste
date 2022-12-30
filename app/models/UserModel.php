@@ -55,7 +55,7 @@
 					unset($fillable_datas['password']);
 					
 				$res = parent::update($fillable_datas , $id);
-				if(isset($user_data['profile'])){
+				if(!upload_empty('profile')){
 					$this->uploadProfile('profile' , $id);
 				}
 				$user_id = $id;
@@ -168,7 +168,6 @@
 			if($createUser) {
 				//send confirmation link
 				$this->sendRegistrationConfirmation($user_data['email']);
-
 				return $createUser;
 			} else {
 				return false;
@@ -337,6 +336,9 @@
 				$errors[] = " Incorrect Password ";
 			}
 
+			if(!$user->is_verified) {
+				$errors[] = " Unverified user, verify account first to continue";
+			}
 			if(!empty($errors)){
 				$this->addError( implode(',', $errors));
 				return false;

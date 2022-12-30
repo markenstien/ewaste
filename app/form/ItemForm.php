@@ -123,7 +123,7 @@
 
         public function addCategory() {
             $categoryModel = model('CategoryModel');
-            $categories = $categoryModel->all(['category'=>'item'],'*','name asc');
+            $categories = $categoryModel->all(['category'=> CategoryService::ITEM],'*','name asc');
             $categories = arr_layout_keypair($categories,['id','name']);
             $this->add([
                 'name' => 'category_id',
