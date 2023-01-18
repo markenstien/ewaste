@@ -65,6 +65,9 @@
 					Flash::set( "Welcome Back !" . auth('first_name'));
 				}
 
+				if(!isEqual(auth('user_type'), UserService::ADMINISTRATOR)) {
+					return redirect(_route('item:catalog'));
+				}
 				return redirect('DashboardController');
 			}
 

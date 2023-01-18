@@ -83,28 +83,32 @@
 </div>
 
 <h4>Commissions</h4>
-<div class="table-resonsive">
-	<table class="table table-bordered dataTable">
-		<thead>
-			<th>Order</th>
-			<th>Order Total</th>
-			<th>Amount</th>
-			<th>Seller</th>
-			<th>Date</th>
-		</thead>
+<div class="card">
+	<div class="card-body">
+		<div class="table-responsive">
+			<table class="table table-bordered dataTable">
+				<thead>
+					<th>Order</th>
+					<th>Order Total</th>
+					<th>Amount</th>
+					<th>Seller</th>
+					<th>Date</th>
+				</thead>
 
-		<tbody>
-			<?php foreach($commissions as $key => $row) :?>
-				<tr>
-					<td><?php echo $row->order_reference?></td>
-					<td><?php echo $row->order_price?></td>
-					<td><?php echo $row->amount?></td>
-					<td><?php echo $row->beneficiary_name?></td>
-					<td><?php echo $row->created_at?></td>
-				</tr>
-			<?php endforeach?>
-		</tbody>
-	</table>
+				<tbody>
+					<?php foreach($commissions as $key => $row) :?>
+						<tr>
+							<td><?php echo $row->order_reference?></td>
+							<td><?php echo $row->order_price?></td>
+							<td><?php echo $row->amount?></td>
+							<td><?php echo $row->beneficiary_name?></td>
+							<td><?php echo $row->created_at?></td>
+						</tr>
+					<?php endforeach?>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 <?php endbuild()?>
 <?php loadTo()?>

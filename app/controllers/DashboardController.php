@@ -18,23 +18,46 @@
 
 		public function index()
 		{
-			$data = [
-				'totalSales' => $this->orderModel->_getSum(['status' => 'complete'], 'net_amount'),
-				'totalOrders' => $this->orderModel->_getCount(),
-				'totalCatalogs' => $this->itemModel->_getCount(),
-				'totalSellers' => $this->userModel->_getCount([
-					'user_type' => [
-						'condition' => 'equal',
-						'value' => UserService::CONSUMER
-					]
-				]),
-				'commissions' => $this->commissionModel->all([
-					'amount' => [
-						'condition' => '>',
-						'value' => 0
-					]
-				])
-			];
+			if(whoIs('user_type', UserService::ADMINISTRATOR)) {
+				$data = [
+					'totalSales' => $this->orderModel->_getSum(['status' => 'complete'], 'net_amount'),
+					'totalOrders' => $this->orderModel->_getCount(),
+					'totalCatalogs' => $this->itemModel->_getCount(),
+					'totalSellers' => $this->userModel->_getCount([
+						'user_type' => [
+							'condition' => 'equal',
+							'value' => UserService::CONSUMER
+						]
+					]),
+					'commissions' => $this->commissionModel->all([
+						'amount' => [
+							'condition' => '>',
+							'value' => 0
+						]
+					])
+				];
+			} else {
+				$user = whoIs();
+
+				$data = [
+					'totalSales' => $this->orderModel->_getSum(['status' => 'complete', 'seller_id' => $user->id], 'net_amount'),
+					'totalOrders' => $this->orderModel->_getCount(['seller_id' => $user->id]),
+					'totalCatalogs' => $this->itemModel->_getCount(['user_id' => $user->id]),
+					'totalSellers' => $this->userModel->_getCount([
+						'user_type' => [
+							'condition' => 'equal',
+							'value' => UserService::CONSUMER
+						]
+					]),
+					'commissions' => $this->commissionModel->all([
+						'amount' => [
+							'condition' => '>',
+							'value' => 0
+						],
+						'user_id' => $user->id
+					])
+				];
+			}
 
 
 			return $this->view('dashboard/index',$data);
