@@ -35,10 +35,15 @@
 
             $this->db->query(
                 "SELECT commission.*, commission.created_at as commission_date,
-                    orders.reference as order_reference 
+                    orders.reference as order_reference ,
+                    orders.net_amount as order_price,
+                    concat(user.firstname, ' ',user.lastname) as beneficiary_name
                     FROM {$this->table} as commission
                     LEFT JOIN orders 
                     ON orders.id = commission.order_id
+
+                    LEFT JOIN users as user
+                    on user.id = commission.user_id
                     {$where} {$order_by}"
             );
 

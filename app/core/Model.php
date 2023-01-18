@@ -429,6 +429,40 @@
 
 		return $WHERE;
 	}
+
+
+	/**
+	 * 
+	 */
+	final public function _getCount($condition = null, $field = 'id') {
+
+		if(!is_null($condition)) {
+			$condition = $this->conditionConvert($condition);
+			$condition = " WHERE ".$condition;
+		}
+		$this->db->query(
+			"SELECT COUNT($field) as total 
+				FROM {$this->table}
+				{$condition}"
+		);
+		return $this->db->single()->total ?? 0;
+	}
+
+	/**
+	 * 
+	 */
+	final public function _getSum($condition = null, $field) {
+		if(!is_null($condition)) {
+			$condition = $this->conditionConvert($condition);
+			$condition = " WHERE ".$condition;
+		}
+		$this->db->query(
+			"SELECT SUM($field) as total 
+				FROM {$this->table}
+				{$condition}"
+		);
+		return $this->db->single()->total ?? 0;
+	}
 		
 
 
