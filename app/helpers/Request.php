@@ -97,7 +97,7 @@
 			$fields = [];
 
 			if(isEqual($this->method, 'get')) {
-				foreach($request as $key => $row) 
+				foreach($_GET as $key => $row) 
 				{
 					if( in_array(strtolower($key) , $this->runTimeVars ))
 						continue;
