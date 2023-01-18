@@ -94,15 +94,15 @@
 
 		public function inputs()
 		{
-			$request = $this->request;
-
 			$fields = [];
 
-			foreach($request as $key => $row) 
-			{
-				if( in_array(strtolower($key) , $this->runTimeVars ))
-					continue;
-				$fields[$key] = $row;
+			if(isEqual($this->method, 'get')) {
+				foreach($request as $key => $row) 
+				{
+					if( in_array(strtolower($key) , $this->runTimeVars ))
+						continue;
+					$fields[$key] = $row;
+				}
 			}
 
 			return $fields;
