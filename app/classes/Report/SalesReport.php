@@ -29,8 +29,7 @@
                 $items = $this->_items;
                 foreach($items as $key => $row) {
                     $retVal['totalSalesInQuantity'] += $row->quantity;
-                    $retVal['totalSalesInAmount'] += $row->sold_price;
-                    $retVal['totalDiscountAmount'] += $row->discount_price;
+                    $retVal['totalSalesInAmount'] += $row->price;
                 }
             }
 

@@ -1,111 +1,100 @@
 <?php build('content') ?>
-<div class="mx-auto col-md-10">
-    <?php Flash::show()?>
-    <div>
-        <div class="text-center">
-            <?php if(isEqual($order->status, 'cancelled')) :?>
-                <div class="alert alert-danger">
-                    <p class="alert-text">Order is Void</p>
+<div class="row">
+    <div class="col-md-7">
+        <?php Flash::show()?>
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Order #: <?php echo $order->reference?></h4>
+                <?php echo wLinkDefault(_route('order:edit', $order->id), 'Edit Order')?>
+            </div>
+            <?php if($isCancellable) :?>
+                <div class="card-footer">
+                    <a href="<?php echo _route('order:cancellation', $order->id)?>" class="btn btn-danger btn-sm">Cancel Order</a>
                 </div>
             <?php endif?>
-            <h1>#<?php echo $order->reference?></h1>
-            <p>Order Receipt : <?php echo $order->status?> | Payment Status : <?php echo $order->is_paid ? 'PAID' : 'UN-PAID'?> | Delivery Status : <?php echo $order->is_delivered ? 'DELIVERED' : 'ON-GOING'?></p>
-        </div>
-        <h3>Customer Info</h3>
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <tr>
-                    <td>Customer Name : </td>
-                    <td><?php echo $order->customer_name?></td>
-                </tr>
-                <tr>
-                    <td>Mobile Number : </td>
-                    <td><?php echo $order->customer_phone?></td>
-                </tr>
-                <tr>
-                    <td>Address : </td>
-                    <td><?php echo $order->customer_address?></td>
-                </tr>
-            </table>
-        </div>
-        <h3 class="mt-5">Particulars</h3>
-        <div class="table-responsive">
-            <table class="table-bordered table">
-                <thead>
-                    <th>Quantity</th>
-                    <th>Item</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                </thead>
+            <div class="card-body">
+                <section>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td>Date Ordered</td>
+                                    <td><?php echo $order->created_at?></td>
+                                </tr>
+                                <tr>
+                                    <td>Customer</td>
+                                    <td><?php echo $order->customer_name?></td>
+                                </tr>
+                                <tr>
+                                    <td>Mobile Number : </td>
+                                    <td><?php echo $order->customer_phone?></td>
+                                </tr>
+                                <tr>
+                                    <td>Address : </td>
+                                    <td><?php echo $order->customer_address?></td>
+                                </tr>
+                                <tr>
+                                    <td>Gross</td>
+                                    <td><?php echo amountHTML($order->gross_amount)?></td>
+                                </tr>
+                                <tr style="border:1px solid green">
+                                    <td>Net Amount</td>
+                                    <td>
+                                        <strong><?php echo amountHTML($order->net_amount)?></strong>
+                                        <div><small>Tax/Vat <?php echo $order->tax_amount?>(<?php echo $order->tax_percentage?>%)</small></div>
+                                    </td>
+                                </tr>
 
-                <tbody>
-                    <?php foreach($items as $key => $row):?>
-                        <tr>
-                            <td><?php echo $row->quantity?></td>
-                            <td><?php echo $row->name?></td>
-                            <td><?php echo amountHTML($row->price)?></td>
-                            <td><?php echo amountHTML($row->price * $row->quantity)?></td>
-                        </tr>
-                    <?php endforeach?>
-                </tbody>
-            </table>
-        </div>
-
-        <section class="mt-3">
-            <h2>Total : <?php echo amountHTML($order->net_amount)?></h2>
-        </section>
-
-        <?php if(isEqual(whoIs('user_type'), 'CONSUMER')) :?>
-            <div class="bg-primary" style="padding: 10px;">
-                <h5>Verifier Commission</h5>
-                <?php foreach($items as $key => $row) :?>
-                    <?php $commission = $orderService::verifierCommission($row->price)?>
-                    <?php if($row->verifier) :?>
-                        <h3>Total Commission(<?php echo $commission['commissionPercentage']?>): <?php echo $commission['commissionAmount']?> </h3>
-                        <div>
-                            <h5>Verifier : <?php echo $row->verifier->firstname . ' '.$row->verifier->lastname ?></h5>
+                                <tr>
+                                    <td>Commission</td>
+                                    <td>
+                                        <strong><?php echo amountHTML($commission->amount ?? 0)?></strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <span class="badge <?php echo isEqual($order->status,['cancelled','returned']) ? 'bg-danger' : 'bg-primary'?>">Order Status : <?php echo strtoupper($order->status)?></span>
+                    <span class="badge <?php echo $order->is_paid ? 'bg-success' : 'bg-primary'?>">Payment Status : <?php echo $order->is_paid ? 'PAID' : 'UN-PAID'?></span>
+                    <span class="badge <?php echo $order->is_delivered ? 'bg-success' : 'bg-primary'?>">Delivery Status : <?php echo $order->is_delivered ? 'DELIVERED' : 'ON-GOING'?></span>
+                
+                    <?php if(isEqual($order->status,['cancelled','returned'])) :?>
+                        <div class="mt-2">
+                            <p>
+                                <strong>Order Status Remarks</strong> <br>
+                                <?php echo $order->remarks?>
+                            </p>
                         </div>
                     <?php endif?>
-                <?php endforeach?>
-            </div>
-        <?php endif?>
-        <section class="mt-2">
-            <h3 class="bg-success" style="padding: 10px;">Payment</h3>
-            <?php if($payment) :?>
-                <p>Total : 
-                    #<?php echo $payment->reference?>(Keep this reference number) Total Amount Paid : <?php echo amountHTML($payment->amount)?> | Method : <?php echo $payment->payment_method?>
-                    <?php
-                        if($payment->organization) {
-                            echo '| ORG : '. $payment->organization . ' | REFERENCE : '. $payment->external_reference;
-                        }
-                    ?>
-                </p>
+                </section>
 
-                <?php if($payment->attachment):?>
-                    <div class="col-md-5">
-                        <h5>Proof Of Payment</h5>
-                        <img src="<?php echo $payment->attachment->full_url?>" alt="">
+                <section>
+                    <label for="" class="mt-3">Particulars</label>
+                    <div class="table-responsive">
+                        <table class="table-bordered table">
+                            <thead>
+                                <th>Quantity</th>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </thead>
+
+                            <tbody>
+                                <?php foreach($items as $key => $row):?>
+                                    <tr>
+                                        <td><?php echo $row->quantity?></td>
+                                        <td><?php echo $row->name?></td>
+                                        <td><?php echo amountHTML($row->price)?></td>
+                                        <td><?php echo amountHTML($row->price * $row->quantity)?></td>
+                                    </tr>
+                                <?php endforeach?>
+                            </tbody>
+                        </table>
                     </div>
-                <?php endif?>
-                <?php if($payment->is_removed) :?>
-                    <h5 class="text-danger">Payment Removed</h5>
-                <?php endif?>
-                <?php else:?>
-                    <h4>No Paymnet</h4>
-                    <a href="<?php echo _route('payment:create', null, [
-                        'order_id' => $order->id
-                    ])?>">Create Payment</a>
-            <?php endif?>
-        </section>
-
-        <section class="mt-2">
-            <h3 class="bg-success" style="padding: 10px;">Delivery</h3>
-            <a href="<?php echo _route('order:delivered', $order->id)?>">Delivered</a>
-        </section>
-
-        <?php if(!isEqual($order->status, 'cancelled')) :?>
-            
-        <?php endif?>
+                    <strong>Total : <?php echo amountHTML($order->net_amount)?></strong>
+                </section>
+            </div>
+        </div>
     </div>
 </div>
 <?php endbuild()?>

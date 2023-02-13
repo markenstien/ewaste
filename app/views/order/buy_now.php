@@ -100,7 +100,14 @@
             <div class="card-footer">
                 <section class="row">
                     <div class="col-6">
-                        Sub Total <h4>PHP : <span id="subTotal"><?php echo $item->sell_price * 1?></span></h4>
+                        <?php
+                            $initialAmount = ($item->sell_price * 1);
+                            $initialAmountWithPercentage = ($initialAmount / 100) * $taxPercentage;
+                        ?>
+                        Total <h5>PHP : <span id="total"><?php echo amountHTML($item->sell_price * 1)?></span></h5>
+                        <div>Tax/Vat : <span id="taxPercentage"><?php echo $taxPercentage?></span>%<small>( <label for="" id="taxAmount"><?php echo $initialAmountWithPercentage?></label> )</small> </div>
+                        <hr>
+                        <h5>Sub Total PHP : <span id="subTotal"><?php echo $initialAmount + $initialAmountWithPercentage?></span></h5>
                     </div>
                     <div class="col-6">
                         <?php
@@ -120,7 +127,10 @@
 <?php build('scripts')?>
     <script>
         $(document).ready(function() {
+            var taxPercentageHTML = $("#taxPercentage");
+
             $("#cart-quanity-controller").on('click', function(e) {
+                let taxPercentage = taxPercentageHTML.html();
                 let quantityValue = Number.parseInt($("#quantity").val());
                 let itemAmount = Number.parseFloat($("#itemAmount").val());
                 let target = e.target;
@@ -131,7 +141,12 @@
                 } else {
                     $("#quantity").val(++quantityValue);
                 }
-                $("#subTotal").html(quantityValue * itemAmount)
+
+                let totalAmount = quantityValue * itemAmount;
+                let taxAmount = (totalAmount / 100) * parseInt(taxPercentage); 
+                $("#total").html((totalAmount).toFixed(2));
+                $("#taxAmount").html(taxAmount.toFixed(2));
+                $("#subTotal").html((taxAmount + totalAmount).toFixed(2));
             });
 
             $("#payment_method_section").on('click', function(e) {

@@ -18,7 +18,8 @@
             'variant',
             'remarks',
             'is_visible',
-            'is_partner_verified'
+            'is_partner_verified',
+            'commission_amount'
         ];
         
         public function createOrUpdate($itemData, $id = null) {
@@ -127,7 +128,7 @@
                     ON seller.id = item.user_id
 
                     LEFT JOIN users as verifier 
-                    ON seller.id = item.is_partner_verified
+                    ON verifier.id = item.is_partner_verified
                     {$where} {$order_by} {$limit}"
             );
 

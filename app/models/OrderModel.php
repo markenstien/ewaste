@@ -322,8 +322,29 @@ use Services\OrderService;
                 $this->addError("Order failed to cancel.");
                 return false;
             }
-            $this->addError("Order has been cancelled");
+            $this->addMessage("Order has been cancelled");
             return true;
+        }
+
+        public function cancellation($cancelData) {
+            $order = parent::get($cancelData['order_id']);
+            if(!$order) {
+                $this->addError("Order does not exists");
+                return false;
+            }
+
+            if(isEqual($order->status,['for-delivery', 'returned','cancelled'])) {
+                $this->addError("This order is currently unnavailable to be cancelled");
+                return false;
+            }
+
+            $this->addMessage("Order has been cancelled");
+            
+            return parent::update([
+                'reason_id' => $cancelData['reason_id'],
+                'remarks' => $cancelData['description'],
+                'status' => 'cancelled',
+            ],$cancelData['order_id']);
         }
 
         public function delivered($id) {
@@ -352,6 +373,9 @@ use Services\OrderService;
             if(!isset($this->orderItemModel)) {
                 $this->orderItemModel = model('OrderItemModel');
             }
+            if(!isset($this->taxModel)) {
+                $this->taxModel = model('TaxModel');
+            }
 
             $item  = $this->itemModel->get($orderData['item_id']);
 
@@ -359,13 +383,14 @@ use Services\OrderService;
                 $this->addError("Item not exist.");
                 return false;
             }
-            
+            $taxData = $this->taxModel->last();
             $buyer = $this->userModel->get($orderData['buyer_id']);
             $verifier = $item->verifier ?? null;
             $seller = $this->userModel->get($item->user_id);
             $quantity = $orderData['quantity'];
-
+            
             $totalAmount = $item->sell_price * $orderData['quantity'];
+            $taxAmount = ($totalAmount / 100) * $taxData->tax_percentage;
 
             $reference = $this->generateReference();
 
@@ -374,8 +399,10 @@ use Services\OrderService;
                 'seller_id' => $seller->id,
                 'customer_id' => $buyer->id,
                 'gross_amount' => $totalAmount,
-                'net_amount' => $totalAmount,
-                'status' => 'pending'
+                'net_amount' => $totalAmount + $taxAmount,
+                'status' => 'pending',
+                'tax_percentage' => $taxData->tax_percentage,
+                'tax_amount'    => $taxAmount
             ]);
 
             if($orderId) {
@@ -403,20 +430,20 @@ use Services\OrderService;
                 if (!isset($this->commissionModel)) {
                     $this->commissionModel = model('CommissionModel');
                 }
-
-                $comission = OrderService::verifierCommission($totalAmount);
-                $comissionAmount = $comission['commissionAmount'];
+                $commisionAmount = $item->commission_amount ?? 0;
                 $comission = $this->commissionModel->createOrUpdate([
                     'user_id' => $verifier->id,
-                    'amount'  => $comissionAmount,
+                    'amount'  => $commisionAmount,
                     'order_id' => $orderId,
                     'status' => 'active'
+                ]);
+                _notify("A commission has been sent to you're account, amounting to  : ".amountHTML($commisionAmount)."", [
+                    $seller->id,
                 ]);
             }
 
             if($orderId) {
                 $this->addMessage("Order: #{$reference} success");
-
                 $this->retVal['orderResponse'] = [
                     'id' => $orderId,
                     'amount' => $totalAmount,
@@ -424,6 +451,17 @@ use Services\OrderService;
                     'seller_id' => $seller->id,
                     'customer_id' => $buyer->id,
                 ];
+
+                $orderLink = _route('order:show', $orderId);
+
+                _notify("Someone, Purchased your item : {$item->name}", [
+                    $seller->id,
+                ], ['href' => $orderLink]);
+
+                _notify("You're order has been processed. #{$reference}", [
+                    $buyer->id,
+                ], ['href' => $orderLink]);
+
                 return $orderId;
             } else {
                 $this->addError("Order failed");
@@ -445,5 +483,18 @@ use Services\OrderService;
 
         private function generateReference() {
             return referenceSeries(parent::lastId(), 5, date('y-m').'-');
+        }
+
+        public function getTopSellingProduct($params = []) {
+            $this->db->query(
+                "SELECT item.*, v_total_sold_amount.total_sold_amount as total_sold
+                    FROM items as item 
+                    LEFT JOIN v_total_sold_amount 
+                    ON item.id = v_total_sold_amount.item_id
+                    ORDER BY total_sold_amount desc
+                    "
+            );
+
+            return $this->db->resultSet();
         }
     }

@@ -59,7 +59,6 @@
 			
 			return $this->dbHelper->update(...$data);
 		}
-
 		public function delete($id)
 		{
 			if(is_array($id)) {

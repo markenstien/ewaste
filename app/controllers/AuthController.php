@@ -23,7 +23,9 @@
 		}
 
 		public function register() {
-
+			if(whoIs()) {
+				return redirect(_route('dashboard:index'));
+			}
 			if(isSubmitted()) {
 				$post = request()->posts();
 				$isOkay = $this->user->register($post);
@@ -51,6 +53,9 @@
 		}
 		public function login()
 		{
+			if(whoIs()) {
+				return redirect(_route('dashboard:index'));
+			}
 			if(isSubmitted())
 			{
 				$post = request()->posts();
@@ -58,11 +63,16 @@
 				$res = $this->user->authenticate($post['email'] , $post['password']);
 
 				if(!$res) {
-					Flash::set( $this->user->getErrorString() , 'danger');
+					Flash::set($this->user->getErrorString(), 'danger');
 					return request()->return();
 				}else
 				{
-					Flash::set( "Welcome Back !" . auth('first_name'));
+					Flash::set( "Welcome Back !" . auth('firstname'));
+				}
+
+				if(!whoIs('is_term_accepted')) {
+					Flash::set("Thanks for registerin in our platform, before enjoying our services , accept our terms and condition");
+					return redirect(_route('auth:terms'));
 				}
 
 				if(!isEqual(auth('user_type'), UserService::ADMINISTRATOR)) {
@@ -92,5 +102,19 @@
 			session_destroy();
 			Flash::set("Successfully logged-out");
 			return redirect( _route('auth:login') );
+		}
+
+		public function terms() {
+			if(!whoIs()) {
+				return redirect(_route('landing:home'));
+			} else {
+				$req = request()->inputs();
+				if(isset($req['accept'])) {
+					$this->user->acceptTerms(whoIs('id'));
+					Flash::set("Terms and Agreement Accepted");
+					return redirect(_route('item:catalog'));
+				}
+				return $this->view('auth/terms');
+			}
 		}
 	}

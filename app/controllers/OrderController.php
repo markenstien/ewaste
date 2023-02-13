@@ -1,6 +1,7 @@
 <?php
 
-    use Services\OrderService;
+use Services\CategoryService;
+use Services\OrderService;
     use Services\PaymentBankService;
 
     load(['OrderService','PaymentBankService'], SERVICES);
@@ -14,13 +15,26 @@
             $this->model = model('OrderModel');
             $this->userModel = model('userModel');
             $this->item = model('ItemModel');
-
+            $this->categoryModel = model('CategoryModel');
+            $this->taxModel = model('TaxModel');
+            $this->commission = model('CommissionModel');
             $this->orderService = new OrderService();
+            _requireAuth();
         }
+
         public function index() {
-            $this->data['orders'] = $this->model->getAll([
-                'order' => 'id desc'
-            ]);
+            if(!$this->is_admin) {
+                $this->data['orders'] = $this->model->getAll([
+                    'order' => 'id desc',
+                    'where' => [
+                        'customer_id' => $this->data['whoIs']->id
+                    ]
+                ]);
+            } else {
+                $this->data['orders'] = $this->model->getAll([
+                    'order' => 'id desc'
+                ]);
+            }
             return $this->view('order/index', $this->data);
         }
 
@@ -29,7 +43,10 @@
             $order = $this->model->getComplete($id);
             $this->data['order'] = $order['order'];
             $this->data['payment'] = $order['payment'];
-
+            $this->data['commission'] = $this->commission->single([
+                'order_id' => $order['order']->id
+            ]);
+            
             $items = $order['items'];
             if($items) {
                 foreach($items as $key => $row) {
@@ -38,6 +55,7 @@
             }
 
             $this->data['items'] = $items;
+            $this->data['isCancellable'] = $this->orderService->isCancelable($order['order']);
             $this->data['orderService'] = $this->orderService;
 
             return $this->view('order/show', $this->data);
@@ -144,7 +162,7 @@
                         break;
                 }
             }
-
+            $this->data['taxPercentage'] = $this->taxModel->current();
             $itemId = $req['productId'];
 
             $item = $this->item->get($itemId);
@@ -159,5 +177,47 @@
             $this->model->delivered($id);
             Flash::set("Order delivered");
             return redirect(_route('order:show', $id));
+        }
+
+        public function cancellation($orderId) {
+            
+            if(isSubmitted()) {
+                $post = request()->posts();
+                if(isEqual($post['reason_id'], '_others_') && empty($post['reason_others'])) {
+                    Flash::set("Reason must not be empty","danger");
+                    return request()->return();
+                } else {
+                    ///check if reason exists.
+                    $isReasonExist = $this->categoryModel->single([
+                        'name' => $post['reason_others'],
+                        'category' => CategoryService::CANCEL_REASON
+                    ]);
+
+                    if(!$isReasonExist) {
+                        $reasonId = $this->categoryModel->store([
+                            'name' => $post['reason_others'],
+                            'category' => CategoryService::CANCEL_REASON
+                        ]);
+                        $post['reason_id'] = $reasonId;
+                    }else{
+                        $post['reason_id'] = $isReasonExist->id;
+                    }
+                }
+
+                $res = $this->model->cancellation($post);
+
+                if($res) {
+                    Flash::set($this->model->getMessageString());
+                }else{
+                    Flash::set($this->model->getErrorString(),'danger');
+                }
+
+                return redirect(_route('order:show', $post['order_id']));
+            }
+
+            $this->data['order'] = $this->model->get($orderId);
+            $this->data['reasons'] = OrderService::cancellationReasons();
+            $this->data['id'] = $orderId;
+            return $this->view('order/cancellation', $this->data);
         }
     }

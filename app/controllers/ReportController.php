@@ -33,11 +33,6 @@
 					]
 				];
 
-				if(!empty($request['user_id'])) {
-					$fetchReport['staff_id'] = $request['user_id'];
-					$user = $this->userModel->get($request['user_id']);
-				}
-
 				$orders = $this->orderModel->all($fetchReport);
 
 				$orderIds = [];
@@ -46,8 +41,6 @@
 						array_push($orderIds, $order->id);
 					}
 				}
-
-
 				$summaryParam = [
 					'where' => [
 						'order_id' => [
@@ -56,7 +49,6 @@
 						]
 					]
 				];
-
 
 				$salesReport = new SalesReport();
 				$saleItems = $this->orderItemModel->getItemsByParam($summaryParam);
@@ -78,7 +70,7 @@
 				$lowestSellingInAmount = $this->orderItemModel->getLowestOrHighest(
 					$summaryParam, OrderItemModel::CATEGORY_AMOUNT,'asc'
 				);
-
+				
 				$salesReport->setItems($saleItems);
 				$salesSummary = $salesReport->getSummary();
 				$this->data['isSummarized'] = true;

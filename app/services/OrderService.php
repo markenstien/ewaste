@@ -1,7 +1,11 @@
 <?php
     namespace Services;
+    load(['CategoryService'], SERVICES);
     use Session;
     class OrderService {
+
+        public static $categoryModel;
+
         public static function startPurchaseSession(){
             $token = get_token_random_char(20);
             Session::set('purchase', $token);
@@ -38,5 +42,24 @@
                 'commissionPercentage' => '12%',
                 'commissionAmount' => $amount * .18
             ];
+        }
+
+        public static function cancellationReasons() {
+            if(is_null(self::$categoryModel)) {
+                self::$categoryModel = model('CategoryModel');
+            }
+
+            $categories = self::$categoryModel->all([
+                'category' => CategoryService::CANCEL_REASON,
+                'active' => true
+            ], '*', 'name desc');
+
+            $categoryKeyPair = arr_layout_keypair($categories, ['id','name']);
+            $categoryKeyPair['_others_'] = 'Others';
+            return $categoryKeyPair;
+        }
+
+        public static function isCancelable($order) {
+            return isEqual($order->status,['for-delivery', 'returned','cancelled']) ? false : true;
         }
     }

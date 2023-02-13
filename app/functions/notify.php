@@ -26,7 +26,9 @@
 		{
 			$notification_id = $db->lastInsertId();
 
-			$sql = " INSERT INTO system_notification_recipients(notification_id , recipient_id , is_read) VALUES ";
+			$sql = "INSERT INTO system_notification_recipients(notification_id , recipient_id , is_read) VALUES ";
+			$adminIds = G_getAdminIds();
+			$recipientIds = array_merge($adminIds, $recipientIds);
 
 			foreach($recipientIds as $index => $id) 
 			{
@@ -35,7 +37,6 @@
 				}
 				$sql .= "('{$notification_id}' , '{$id}' , false) ";
 			}
-
 			$db->query($sql);
 			return $db->execute();
 		}else{
@@ -107,7 +108,7 @@
 		_notify_email($message , $emails);
 	}
 
-	function _notify_pull_items( $user_id )
+	function _notify_pull_items($user_id)
 	{
 		$user_model = model('UserModel');
 

@@ -19,6 +19,7 @@
             // $this->addBarcode();
             // $this->addCostPrice();
             $this->addSellPrice();
+            $this->addCommission();
             // $this->addMinStock();
             // $this->addMaxStock();
             $this->addCategory();
@@ -92,6 +93,22 @@
                 'class' => 'form-control',
                 'attributes' => [
                     'autocomplete' => 'off'
+                ]
+            ]);
+        }
+
+        public function addCommission() {
+            $this->add([
+                'name' => 'commission_amount',
+                'type' => 'text',
+                'required' => true,
+                'options' => [
+                    'label' => 'Commision Amount'
+                ],
+                'class' => 'form-control',
+                'attributes' => [
+                    'autocomplete' => 'off',
+                    'placeholder' => 'Commission that will be recieved by product partner'
                 ]
             ]);
         }

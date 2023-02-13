@@ -7,7 +7,7 @@
     define('DEFAULT_REPLY_TO' , '');
 
     const MAILER_AUTH = [
-        'username' => 'main@e-waste.shop',
+        'username' => 'support@e-waste.shop',
         'password' => '2.hd@AlJV7w;',
         'host'     => 'e-waste.shop',
         'name'     => 'e-waste',

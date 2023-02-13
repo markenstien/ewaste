@@ -190,7 +190,7 @@
             $this->db->query(
                 "SELECT item.name as item_name,
                 item.sku as sku, oi.*, ordr.reference, ordr.created_at, ordr.is_paid,
-                ordr.date_time
+                ordr.created_at
             
                 FROM items as item
                 LEFT JOIN order_items as oi
@@ -224,20 +224,19 @@
                         GROUP BY item.id
                         ORDER BY SUM(quantity) {$sort}
                     "
-                        
                 );
             }
 
             if($category == self::CATEGORY_AMOUNT) {
                 $this->db->query(
-                    "SELECT SUM(sold_price) as total_amount, item.name as item_name ,
+                    "SELECT SUM(price) as total_amount, item.name as item_name ,
                         item.sku
                         FROM order_items as oi 
                         LEFT JOIN items as item
                         ON oi.item_id = item.id 
                         {$where}
                         GROUP BY item.id
-                        ORDER BY SUM(sold_price) {$sort}"
+                        ORDER BY SUM(price) {$sort}"
                 );
             }
 

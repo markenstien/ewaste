@@ -19,11 +19,12 @@
             $request = request()->inputs();
 
             if(isSubmitted()) {
-                $res = $this->model->createOrUpdate($request);
+                $post = request()->posts();
+                $res = $this->model->createOrUpdate($post);
 
                 if($res) {
                     Flash::set("Stock added");
-                    return redirect(_route('item:show', $request['item_id']));
+                    return redirect(_route('item:show', $post['item_id']));
                 } else {
                     Flash::set($this->model->getErrorString(), 'danger');
                     return request()->return();

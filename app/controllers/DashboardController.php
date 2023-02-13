@@ -14,6 +14,10 @@
 			$this->itemModel = model('ItemModel');
 			$this->userModel = model('UserModel');
 			$this->commissionModel = model('CommissionModel');
+
+			if(!whoIs()) {
+				return redirect(_route('auth:login'));
+			}
 		}
 
 		public function index()

@@ -38,17 +38,13 @@
                                 <td colspan="5">HIGHEST STOCKS IN LEVEL</td>
                             </tr>
                             <tr>
-                                <td>ITEM + SKU</td>
-                                <td>MIN</td>
-                                <td>MAX</td>
+                                <td>ITEM</td>
                                 <td>STOCKS</td>
                                 <td>LEVEL</td>
                             </tr>
                             <?php foreach($highestStockByMaxQuantity as $key => $row) :?>
                                 <tr>
-                                    <td><?php echo "{$row->name} ({$row->sku})"?></td>
-                                    <td><?php echo $row->min_stock?></td>
-                                    <td><?php echo $row->max_stock?></td>
+                                    <td><?php echo "{$row->name}"?></td>
                                     <td><?php echo $row->total_stock?></td>
                                     <td><?php echo $row->stock_level?></td>
                                 </tr>
@@ -57,17 +53,13 @@
                                 <td colspan="5">LOWEST STOCKS IN LEVEL</td>
                             </tr>
                             <tr>
-                                <td>ITEM + SKU</td>
-                                <td>MIN STOCK</td>
-                                <td>MAX STOCK</td>
+                                <td>ITEM</td>
                                 <td>STOCKS</td>
                                 <td>LEVEL</td>
                             </tr>
                             <?php foreach($lowestStockByMaxQuantity as $key => $row) :?>
                                 <tr>
-                                    <td><?php echo "{$row->name} ({$row->sku})"?></td>
-                                    <td><?php echo $row->min_stock?></td>
-                                    <td><?php echo $row->max_stock?></td>
+                                    <td><?php echo "{$row->name}"?></td>
                                     <td><?php echo $row->total_stock?></td>
                                     <td><?php echo $row->stock_level?></td>
                                 </tr>
@@ -77,18 +69,14 @@
                                 <td colspan="5">HIGHEST STOCKS IN QUANTITY</td>
                             </tr>
                             <tr>
-                                <td>ITEM + SKU</td>
-                                <td>MIN STOCK</td>
-                                <td>MAX STOCK</td>
+                                <td>ITEM</td>
                                 <td>STOCKS</td>
                                 <td>LEVEL</td>
                             </tr>
 
                             <?php foreach($highestStockByQuantity as $key => $row) :?>
                                 <tr>
-                                    <td><?php echo "{$row->name} ({$row->sku})"?></td>
-                                    <td><?php echo $row->min_stock?></td>
-                                    <td><?php echo $row->max_stock?></td>
+                                    <td><?php echo "{$row->name}"?></td>
                                     <td><?php echo $row->total_stock?></td>
                                     <td><?php echo $row->stock_level?></td>
                                 </tr>
@@ -98,18 +86,14 @@
                                 <td colspan="5">LOWEST STOCKS IN QUANTITY</td>
                             </tr>
                             <tr>
-                                <td>ITEM + SKU</td>
-                                <td>MIN STOCK</td>
-                                <td>MAX STOCK</td>
+                                <td>ITEM</td>
                                 <td>STOCKS</td>
                                 <td>LEVEL</td>
                             </tr>
 
                             <?php foreach($lowestStockByQuantity as $key => $row) :?>
                                 <tr>
-                                    <td><?php echo "{$row->name} ({$row->sku})"?></td>
-                                    <td><?php echo $row->min_stock?></td>
-                                    <td><?php echo $row->max_stock?></td>
+                                    <td><?php echo "{$row->name}"?></td>
                                     <td><?php echo $row->total_stock?></td>
                                     <td><?php echo $row->stock_level?></td>
                                 </tr>
@@ -122,12 +106,10 @@
                     <section class="particular">
                         <h4>Stocks</h4>
                         <?php $totalStock = 0?>
-                        <small>ARRANGED BY HIHEST STOCK LEVEL AND STOCK</small>
+                        <small>ARRANGED BY HIGHEST STOCK LEVEL AND STOCK</small>
                         <table class="table table-bordered">
                             <thead>
-                                <td>ITEM + SKU</td>
-                                <td>MIN</td>
-                                <td>MAX</td>
+                                <td>ITEM</td>
                                 <td>STOCK</td>
                                 <td>LEVEL</td>
                             </thead>
@@ -136,15 +118,13 @@
                                 <?php foreach($stocks as $key => $row) :?>
                                     <?php $totalStock += $row->total_stock?>
                                     <tr>
-                                        <td><?php echo "{$row->name} ({$row->sku})"?></td>
-                                        <td><?php echo $row->min_stock?></td>
-                                        <td><?php echo $row->max_stock?></td>
+                                        <td><?php echo "{$row->name}"?></td>
                                         <td><?php echo $row->total_stock?></td>
                                         <td><?php echo $row->stock_level?></td>
                                     </tr>
                                 <?php endforeach?>
                                 <tr>
-                                    <td colspan="3">Total</td>
+                                    <td colspan="1">Total</td>
                                     <td><?php echo $totalStock?></td>
                                 </tr>
                             </tbody>

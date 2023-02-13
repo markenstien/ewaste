@@ -16,6 +16,7 @@
             $this->model = model('ItemModel');
             $this->stockModel = model('StockModel');
             $this->data['item_form'] = new ItemForm();
+            _requireAuth();
         }
 
         public function index() {
@@ -47,7 +48,8 @@
         public function create(){
             $request = request()->inputs();
             if (isSubmitted()) {
-                $res = $this->model->createOrUpdate($request);
+                $post = request()->posts();
+                $res = $this->model->createOrUpdate($post);
 
                 if($res) {
                     Flash::set($this->model->getMessageString());
@@ -88,7 +90,8 @@
             $request = request()->inputs();
 
             if (isSubmitted()) {
-                $res = $this->model->createOrUpdate($request, $request['id']);
+                $post = request()->posts();
+                $res = $this->model->createOrUpdate($post, $post['id']);
                 if(!$res) {
                     Flash::set($this->model->getErrorString(),'danger');
                     return redirect(_route('item:edit', $id));
@@ -138,13 +141,13 @@
                     ]
                 ], 'id desc, item.name desc');
             } else {
-                $this->data['items'] = $this->model->all();
+                $this->data['items'] = $this->model->all(null, null, 'item.name asc');
             }
-
             
             if ($this->data['items']) {
                 $this->data['items'] = $this->model->appendImages($this->data['items'],'URL_ONLY');
             }
+
             return $this->view('item/catalog', $this->data);
         }
 

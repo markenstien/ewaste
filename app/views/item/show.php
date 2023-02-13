@@ -29,6 +29,10 @@
                                     <td>Sell Price : </td>
                                     <td><?php echo $item->sell_price?></td>
                                 </tr>
+                                <tr>
+                                    <td>Commission Amount: </td>
+                                    <td><?php echo $item->commission_amount?></td>
+                                </tr>
 
                                 <tr>
                                     <td>Seller Name & Verifier: </td>

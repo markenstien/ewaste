@@ -40,9 +40,8 @@
                 'options' => [
                     'label' => 'Category For',
                     'option_values' => [
-                        CategoryService::PETTY,
-                        CategoryService::COMMON_TRANSACTIONS,
-                        CategoryService::ITEM
+                        CategoryService::ITEM,
+                        CategoryService::CANCEL_REASON
                     ]
                 ],
                 'class' => 'form-control'

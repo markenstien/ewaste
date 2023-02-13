@@ -19,7 +19,8 @@
         public function create() {
             $req = request()->inputs();
             if(isSubmitted()) {
-                $req = $this->model->createOrUpdate($req);
+                $post = request()->posts();
+                $req = $this->model->createOrUpdate($post);
 
                 if($req) {
                     Flash::set($this->model->getMessageString());
@@ -41,7 +42,8 @@
         public function edit($id) {
             $req = request()->inputs();
             if(isSubmitted()) {
-                $req = $this->model->createOrUpdate($req, $id);
+                $post = request()->posts();
+                $req = $this->model->createOrUpdate($post, $id);
 
                 if($req) {
                     Flash::set($this->model->getMessageString());

@@ -56,7 +56,7 @@
     $system['version']  = 'N/A';
 
 
-    $system['app_name'] = 'COVID-PIMS';
+    $system['app_name'] = 'E-WASTE';
 
     $ui = [
         'vendor' => 'cork'

@@ -37,11 +37,22 @@
 		'log'   => $controller.'/log',
 	];
 
+	$controller = '/TaxController';
+	$routes['tax'] = [
+		'index' => $controller.'/index',
+		'edit' => $controller.'/edit',
+		'create' => $controller.'/create',
+		'delete' => $controller.'/destroy',
+		'show'   => $controller.'/show',
+		'log'   => $controller.'/log',
+	];
+
 	$controller = '/AuthController';
 	$routes['auth'] = [
 		'login' => $controller.'/login',
 		'register' => $controller.'/register',
 		'logout' => $controller.'/logout',
+		'terms' => $controller. '/terms'
 	];
 
 	$controller = '/AttachmentController';
@@ -104,12 +115,14 @@
 	$routes['order'] = [
 		'index' => $controller.'/index',
 		'order' => $controller.'/orderReceipt',
+		'edit'  => $controller. '/edit',
 		'create' => $controller.'/create',
 		'delete' => $controller.'/destroy',
 		'show'   => $controller.'/show',
 		'void'   => $controller.'/voidOrder',
 		'buy-now'   => $controller.'/buyNow',
-		'delivered' => $controller. '/delivered'
+		'delivered' => $controller. '/delivered',
+		'cancellation' => $controller .'/cancellation'
 	];
 
 	$controller = '/PaymentController';
@@ -238,6 +251,15 @@
 		'delete-item' => $controller. '/deleteItem',
 		'respond'   => '/FormController'.'/respond'
 	];
+
+	$controller = '/LandingController';
+	$routes['landing'] = [
+		'home' => $controller.'/index',
+		'about' => $controller.'/about',
+		'catalog' => $controller.'/catalog',
+		'contact' => $controller.'/contact'
+	];
+
 
 	return $routes;
 ?>

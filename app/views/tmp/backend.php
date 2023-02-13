@@ -26,23 +26,23 @@ License: For each use you must have a valid license purchased only from above li
   <!-- End fonts -->
 
 <!-- core:css -->
-<link rel="stylesheet" href="<?php echo _path_tmp('assets/vendors/core/core.css')?>">
+<link rel="stylesheet" href="<?php echo _path_tmp('main-tmp/assets/vendors/core/core.css')?>">
 <!-- endinject -->
 
 <!-- Plugin css for this page -->
-  <link rel="stylesheet" href="<?php echo _path_tmp('assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css')?>">
+  <link rel="stylesheet" href="<?php echo _path_tmp('main-tmp/assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css')?>">
     <!-- End plugin css for this page -->
 
 <!-- inject:css -->
-<link rel="stylesheet" href="<?php echo _path_tmp('assets/fonts/feather-font/css/iconfont.css')?>">
-<link rel="stylesheet" href="<?php echo _path_tmp('assets/vendors/flag-icon-css/css/flag-icon.min.css')?>">
+<link rel="stylesheet" href="<?php echo _path_tmp('main-tmp/assets/fonts/feather-font/css/iconfont.css')?>">
+<link rel="stylesheet" href="<?php echo _path_tmp('main-tmp/assets/vendors/flag-icon-css/css/flag-icon.min.css')?>">
 <!-- endinject -->
 
 <!-- Layout styles -->  
-<link rel="stylesheet" href="<?php echo _path_tmp('assets/css/demo3/style.css')?>">
+<link rel="stylesheet" href="<?php echo _path_tmp('main-tmp/assets/css/demo3/style.css')?>">
 <!-- End layout styles -->
 
-<link rel="shortcut icon" href="<?php echo _path_tmp('assets/images/favicon.png')?>" />
+<link rel="shortcut icon" href="<?php echo _path_tmp('main-tmp/assets/images/favicon.png')?>" />
 
   <?php produce('styles')?>
   
@@ -51,6 +51,7 @@ License: For each use you must have a valid license purchased only from above li
     <?php $auth = auth()?>
     <div class="main-wrapper">
         <!-- partial:../../partials/_navbar.html -->
+        <?php if(whoIs('is_term_accepted')) :?>
         <div class="horizontal-menu">
             <nav class="navbar top-navbar">
                 <div class="container">
@@ -60,15 +61,34 @@ License: For each use you must have a valid license purchased only from above li
                         </a>
                         <?php if($auth) :?>
                             <?php $notifications = _notify_pull_items($auth->id)?>
-                            <form class="search-form">
-                                <div class="input-group">
-                                    <div class="input-group-text">
-                                      <i data-feather="search"></i>
-                                    </div>
-                                    <input type="text" class="form-control" id="navbarForm" placeholder="Search here...">
-                                </div>
-                            </form>
                             <ul class="navbar-nav">
+                              <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i data-feather="bell"></i>
+                                  <div class="indicator">
+                                    <div class="circle"></div>
+                                  </div>
+                                </a>
+                                <div class="dropdown-menu p-0" aria-labelledby="notificationDropdown">
+                                  <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
+                                    <p><?php echo count($notifications)?> New Notifications</p>
+                                    <a href="javascript:;" class="text-muted">Clear all</a>
+                                  </div>
+                                  <div class="p-1">
+                                    <?php foreach($notifications as $key => $row) :?>
+                                      <a href="<?php echo $row->href?>" class="dropdown-item d-flex align-items-center py-2">
+                                        <div class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
+                                          <i class="icon-sm text-white" data-feather="alert-circle"></i>
+                                        </div>
+                                        <div class="flex-grow-1 me-2">
+                                          <p><?php echo $row->message?></p>
+                                          <p class="tx-12 text-muted"><?php echo time_since($row->created_at)?></p>
+                                        </div>	
+                                      </a>
+                                    <?php endforeach?>
+                                  </div>
+                                </div>
+                              </li>
                               <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="<?php echo _route('user:show' , $auth->id)?>" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   <img class="wd-30 ht-30 rounded-circle" src="<?php echo whoIs('profile')?>" alt="profile">
@@ -176,20 +196,27 @@ License: For each use you must have a valid license purchased only from above li
                                     <span class="menu-title">Category</span>
                                 </a>
                             </li>
-                            <?php endif?>
 
-                            <?php if(isEqual($auth->user_type, ['admin'])) :?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo _route('tax:index')?>">
+                                    <i class="link-icon" data-feather="box"></i>
+                                    <span class="menu-title">Tax Setting</span>
+                                </a>
+                            </li>
+                            <?php endif?>
+                            
+
+                            <?php if(isEqual($auth->user_type, ['administrator'])) :?>
                             <li class="nav-item">
                                 <a href="/ReportController/create" class="nav-link">
                                     <i class="link-icon" data-feather="hash"></i>
                                     <span class="menu-title">Reports</span></a>
                             </li>
                             <?php endif?>
-                        </ul>
-                    </div>
                 </nav>
             <?php endif?>
         </div>
+        <?php endif?>
         <!-- partial -->
     
         <div class="page-wrapper">
@@ -210,7 +237,7 @@ License: For each use you must have a valid license purchased only from above li
     </div>
 
     <!-- core:js -->
-    <script src="<?php echo _path_tmp('assets/vendors/core/core.js')?>"></script>
+    <script src="<?php echo _path_tmp('main-tmp/assets/vendors/core/core.js')?>"></script>
     <script src="<?php echo _path_public('js/core.js')?>"></script>
     <script src="<?php echo _path_public('js/global.js')?>"></script>
     <?php produce('scripts')?>
@@ -220,13 +247,13 @@ License: For each use you must have a valid license purchased only from above li
     <!-- End plugin js for this page -->
 
     <!-- inject:js -->
-    <script src="<?php echo _path_tmp('assets/vendors/feather-icons/feather.min.js')?>"></script>
-    <script src="<?php echo _path_tmp('assets/js/template.js')?>"></script>
+    <script src="<?php echo _path_tmp('main-tmp/assets/vendors/feather-icons/feather.min.js')?>"></script>
+    <script src="<?php echo _path_tmp('main-tmp/assets/js/template.js')?>"></script>
     <!-- endinject -->
 
     <!-- Plugin js for this page -->
-    <script src="<?php echo _path_tmp('assets/vendors/datatables.net/jquery.dataTables.js')?>"></script>
-    <script src="<?php echo _path_tmp('assets/vendors/datatables.net-bs4/dataTables.bootstrap4.js')?>"></script>
+    <script src="<?php echo _path_tmp('main-tmp/assets/vendors/datatables.net/jquery.dataTables.js')?>"></script>
+    <script src="<?php echo _path_tmp('main-tmp/assets/vendors/datatables.net-bs4/dataTables.bootstrap4.js')?>"></script>
 
     <script type="text/javascript" defer>
         $(function() {

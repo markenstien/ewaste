@@ -41,7 +41,7 @@
                                 <td>
                                     <ul>
                                         <?php foreach($reportData['highestSellingInQuantity'] as $key => $row) :?>
-                                            <li><small><?php echo $row->sku?></small><?php echo $row->item_name?> (<?php echo $row->total_quantity?>) Items</li>
+                                            <li><?php echo $row->item_name?> (<?php echo $row->total_quantity?>) Items</li>
                                         <?php endforeach?>
                                     </ul>
                                 </td>
@@ -49,7 +49,11 @@
                                 <td>
                                     <ul>
                                     <?php foreach($reportData['highestSellingInAmount'] as $key => $row) :?>
-                                            <li><small><?php echo $row->sku?></small><?php echo $row->item_name?> (<?php echo amountHTML($row->total_amount)?>) Items</li>
+                                        <li><?php echo $row->item_name?>
+                                            <div>
+                                            (<?php echo amountHTML($row->total_amount)?>) Total Amount
+                                            </div>
+                                        </li>
                                         <?php endforeach?>
                                     </ul>
                                 </td>
@@ -67,7 +71,7 @@
                                 <td>
                                     <ul>
                                         <?php foreach($reportData['lowestSellingInQuantity'] as $key => $row) :?>
-                                            <li><small><?php echo $row->sku?></small><?php echo $row->item_name?> (<?php echo $row->total_quantity?>) Items</li>
+                                            <li><?php echo $row->item_name?> (<?php echo $row->total_quantity?>) Items</li>
                                         <?php endforeach?>
                                     </ul>
                                 </td>
@@ -75,8 +79,12 @@
                                 <td>
                                     <ul>
                                     <?php foreach($reportData['lowestSellingInAmount'] as $key => $row) :?>
-                                            <li><small><?php echo $row->sku?></small><?php echo $row->item_name?> (<?php echo amountHTML($row->total_amount)?>) Items</li>
-                                        <?php endforeach?>
+                                        <li><?php echo $row->item_name?> 
+                                            <div>
+                                                (<?php echo amountHTML($row->total_amount)?>) Total Amount
+                                            </div>
+                                        </li>
+                                    <?php endforeach?>
                                     </ul>
                                 </td>
                             </tr>
@@ -91,7 +99,6 @@
                                 <th>Item+SKU</th>
                                 <th>Quantity</th>
                                 <th>Sell Price</th>
-                                <th>Discount</th>
                                 <th>Total</th>
                             </thead>
                             <tbody>
@@ -100,8 +107,7 @@
                                         <td><?php echo $row->item_name.'('.$row->sku.')'?></td>
                                         <td><?php echo $row->quantity?></td>
                                         <td><?php echo amountHTML($row->price)?></td>
-                                        <td><?php echo amountHTML($row->discount_price)?></td>
-                                        <td><?php echo amountHTML($row->sold_price)?></td>
+                                        <td><?php echo amountHTML($row->price * $row->quantity)?></td>
                                     </tr>
                                 <?php endforeach?>
                             </tbody>
@@ -124,7 +130,6 @@
                 ?>
                     <?php echo $_formCommon->getRow('start_date')?>
                     <?php echo $_formCommon->getRow('end_date')?>
-                    <?php echo $_formCommon->getRow('user_id')?>
                     <?php echo $_formCommon->get('submit')?>
                 <?php Form::close()?>
             </div>

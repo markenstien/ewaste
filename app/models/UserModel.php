@@ -490,4 +490,12 @@
 			}
 			return $user;
 		}
+
+		public function acceptTerms($userId) {
+			parent::update([
+				'is_term_accepted' => true
+			], $userId);
+			
+			$this->startAuth($userId);
+		}
 	}

@@ -1,11 +1,11 @@
 <?php
-
-use Services\UserService;
-load(['UserService'], SERVICES);
+    use Services\UserService;
+    load(['UserService'], SERVICES);
 
     function removeVerifierValue() {
         return '0000-00-00 00:00:00';
     }
+
     function __($data)
     {
         if( is_array($data) )
@@ -427,5 +427,20 @@ load(['UserService'], SERVICES);
         if( isEqual($returnType , 'object') )
             return json_decode(json_encode($retVal));
 
+        return $retVal;
+    }
+
+    function G_getAdminIds() 
+    {
+        $retVal = [];
+        // ADMINISTRATOR
+        $userModel = model('UserModel');
+        $users = $userModel->all([
+            'user_type' => 'ADMINISTRATOR'
+        ]);
+
+        foreach($users as $key => $row) {
+            $retVal[] = $row->id;
+        }
         return $retVal;
     }
